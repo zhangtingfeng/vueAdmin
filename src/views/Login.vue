@@ -93,13 +93,16 @@ export default {
   },
   methods: {
     getToken() {
-      this.utils.request.getVtoken("student-service",{}, this.getVtokenResult);
+//        debugger;
+      this.utils.request.getVtoken({}, this.getVtokenResult);
     },
 
     getVtokenResult(data) {
+      //  debugger;
       localStorage.setItem("vtoken", data.data);
-      this.loginForm.src =
-        this.utils.getHost("student-service") + "/suser/getLoginCode?vtoken=" + data.data;
+      this.refreshCaptcha();
+     /// this.loginForm.src =
+     //   this.utils.getHost() + "student-service/suser/getLoginCode?vtoken=" + data.data;
     },
     login() {
       var this_ = this;
@@ -154,13 +157,20 @@ export default {
         }
       });
     },
-    refreshCaptcha: function() {
+    refreshCaptcha() {
+       // debugger;
+        let letthis=this;
+        this.utils.request.getRequest('student-service/SysUser/getLoginCode/'+localStorage.getItem("vtoken")+"?time="+(new Date().getTime()), function (data) {
+            letthis.loginForm.src ="data:image/png;base64,"+data.data.ImageBase64;
+             //debugger;
+        });
+/*
       this.loginForm.src =
         this.utils.getHost() +
-        "suser/getLoginCode?vtoken=" +
+          "student-service/suser/getLoginCode?vtoken=" +
         localStorage.getItem("vtoken") +
         "&data=" +
-        new Date().getTime();
+        new Date().getTime();*/
     },
     reset() {
       this.$refs.loginForm.resetFields();

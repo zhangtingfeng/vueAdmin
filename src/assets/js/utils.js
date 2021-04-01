@@ -10,13 +10,11 @@ const PIC_URL_PRE = 'F:/usr/local/static/imgs';
 export default {
   request: {
     gethostPath() {
-      //debugger;
       let args = process.argv.slice(2);
-      console.log(args);
       let letpathNODE_ENV = process.env.NODE_ENV;
       let letpath = '';
       if (letpathNODE_ENV === 'development') {
-        letpath = 'http://localhost:48028/';
+        letpath = '/';
       } else if (letpathNODE_ENV === 'developmentEreka') {
         letpath = '/';
       } else if (letpathNODE_ENV === 'production') {
@@ -25,7 +23,7 @@ export default {
 
       return letpath;
     },
-    requestUrl(servicename, data, argurl, callback) {
+    requestPostUrl(data, argurl, callback) {
       var params = {};
       params = {
         'loginChannel': 'pc',
@@ -47,22 +45,19 @@ export default {
 
       if (letpathNODE_ENV === 'development') {
         url = this.gethostPath() + argurl;
-        //url = this.gethostPath();
-        //params["headRouter"] = servicename + "/" + argurl;
       } else if (letpathNODE_ENV === 'developmentEreka') {
         url = this.gethostPath();
-       // params["headRouter"] = servicename + "/" + argurl;
       } else if (letpathNODE_ENV === 'production') {
         url = this.gethostPath();
-        params["headRouter"] = servicename + "/" + argurl;
+        params["headRouter"] =   argurl;
       }
 
 
-      debugger;
+      //debugger;
       axios.post(url, (params),
         {
           headers: {
-            'headRouter': servicename + "/" + argurl
+            'headRouter':  argurl
           }
         }
         ).then(rsp => {
@@ -93,98 +88,157 @@ export default {
         callback(data);
       });
     },
+    requestGetUrl( argurl, callback) {
+      var params = {};
+      params = {
+        'loginChannel': 'pc',
+        'token': localStorage.getItem('token'),
+        'sign': 'qazwsxedc'
+      }
 
-    getVtoken(servicename, data, callback) {
+      let url = "";
+      let letpathNODE_ENV = process.env.NODE_ENV;
+
+      if (letpathNODE_ENV === 'development') {
+        url = this.gethostPath() + argurl;
+      } else if (letpathNODE_ENV === 'developmentEreka') {
+        url = this.gethostPath();
+      } else if (letpathNODE_ENV === 'production') {
+        url = this.gethostPath();
+        params["headRouter"] =   argurl;
+      }
+
+
       //debugger;
-      this.requestUrl(servicename, data, 'SysUser/getVtoken', callback);
+      axios.get(url, (params),
+        {
+          headers: {
+            'headRouter':  argurl
+          }
+        }
+      ).then(rsp => {
+
+
+        if (rsp.data.code == "4000") {
+          Message.error({//弹窗使用方法
+            showClose: true,
+            duration: 2000,  //警告的消息3秒钟后消失
+            message: "登录失效，请重新登录",
+          });
+
+
+          setTimeout(function () {
+            localStorage.removeItem('token');
+            router.push("/login");
+          }, 3000);
+
+        } else {
+          callback(rsp.data);
+        }
+
+
+      }).catch(error => {
+        var data = {};
+        data.code = '9999';
+        data.msg = error.message;
+        callback(data);
+      });
     },
-    setShwoRoomShop(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'shop/setShwoRoomShop', callback);
+    getRequest( url, callback) {
+      //debugger;
+      this.requestGetUrl( url, callback);
+    },
+    getVtoken( data, callback) {
+      //debugger;
+      this.requestPostUrl( data, 'student-service/SysUser/getVtoken', callback);
+    },
+    setShwoRoomShop(data, callback) {
+      this.requestPostUrl( data, 'shop/setShwoRoomShop', callback);
     },
     //登录信息
-    login(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'suser/login', callback)
+    login( data, callback) {
+      this.requestPostUrl( data, 'student-service/suser/login', callback)
     },
-    findDeptTree(servicename, data, callback) {
-      this.requestUrl(data, 'menu/findDeptTree', callback)
+    findDeptTree( data, callback) {
+      this.requestPostUrl(data, 'student-service/menu/findDeptTree', callback)
     },
-    findProductTypeTree(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'menu/findProductTypeTree', callback)
+    findProductTypeTree(data, callback) {
+      this.requestPostUrl( data, 'student-service/menu/findProductTypeTree', callback)
     },
-    selectDeptTree(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'menu/selectDeptTree', callback)
+    selectDeptTree(data, callback) {
+      this.requestPostUrl( data, 'student-service/menu/selectDeptTree', callback)
     },
-    findNavTree(servicename, data, callback) {
-      this.requestUrl(data, 'menu/findNavTree', callback)
+    findNavTree( data, callback) {
+      this.requestPostUrl(data, 'student-service/menu/findNavTree', callback)
     },
-    findPermissions(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'menu/findPermissions', callback)
+    findPermissions(data, callback) {
+      this.requestPostUrl(data, 'student-service/menu/findPermissions', callback)
     },
-    editUser(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'menu/editUser', callback)
+    editUser(data, callback) {
+      this.requestPostUrl( data, 'student-service/menu/editUser', callback)
     },
-    editInfo(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'cmn/editInfo', callback)
+    editInfo(data, callback) {
+      this.requestPostUrl(data, 'student-service/cmn/editInfo', callback)
     },
-    editParmas(servicename, data, callback) {
-      this.requestUrl(servicename, data, 'cmn/editParmas', callback)
+    editParmas( data, callback) {
+      this.requestPostUrl( data, 'student-service/cmn/editParmas', callback)
     },
-    queryUserList: function (servicename, data, callback) { // 通用 查询列表
-      this.requestUrl(servicename, data, 'cmn/queryList', callback);
+    queryUserList: function ( data, callback) { // 通用 查询列表
+      this.requestPostUrl( data, 'student-service/cmn/queryList', callback);
     },
-    checkShop: function (servicename, data, callback) { // 通用 查询列表
-      this.requestUrl(servicename, data, 'cmn/checkShop', callback);
+    checkShop: function ( data, callback) { // 通用 查询列表
+      this.requestPostUrl( data, 'student-service/cmn/checkShop', callback);
     },
-    checkShopDoorPlate: function (servicename, data, callback) { // 通用 查询列表
-      this.requestUrl(servicename, data, 'cmn/checkShopDoorPlate', callback);
+    checkShopDoorPlate: function (data, callback) { // 通用 查询列表
+      this.requestPostUrl(data, 'student-service/cmn/checkShopDoorPlate', callback);
     },
-    queryUserPage: function (servicename, data, callback) { // 通用 查询列表
-      this.requestUrl(servicename, data, 'cmn/queryPage', callback);
+    queryUserPage: function ( data, callback) { // 通用 查询列表
+      this.requestPostUrl( data, 'student-service/cmn/queryPage', callback);
     },
-    queryForPage: function (servicename, data, callback) { // 通用 查询列表
-      this.requestUrl(servicename, data, 'cmn/queryForPage', callback);
+    queryForPage: function ( data, callback) { // 通用 查询列表
+      this.requestPostUrl(data, 'student-service/cmn/queryForPage', callback);
     },
-    queryUserInfo: function (servicename, data, callback) { // 通用 获取单个对象信息
-      this.requestUrl(servicename, data, 'cmn/queryInfoRole', callback);
+    queryUserInfo: function ( data, callback) { // 通用 获取单个对象信息
+      this.requestPostUrl( data, 'student-service/cmn/queryInfoRole', callback);
     },
-    queryUserInfos: function (servicename, data, callback) { // 通用 获取单个对象信息
-      this.requestUrl(servicename, data, 'cmn/queryInfoRole', callback);
+    queryUserInfos: function (data, callback) { // 通用 获取单个对象信息
+      this.requestPostUrl(data, 'student-service/cmn/queryInfoRole', callback);
     },
 
     deleteUserInfo: function (data, callback) { // 通用 删除信息
-      this.requestUrl(data, 'cmn/deleteInfo', callback);
+      this.requestPostUrl(data, 'student-service/cmn/deleteInfo', callback);
     },
 
     deleteSysCache: function (data, callback) { // 通用 清除参数配置缓存
-      this.requestUrl(data, 'cmn/deleteSysCache', callback);
+      this.requestPostUrl(data, 'student-service/cmn/deleteSysCache', callback);
     },
 
     batchDeleteInfo: function (data, callback) { // 通用 批量删除信息
-      this.requestUrl(data, 'cmn/batchDeleteInfo', callback);
+      this.requestPostUrl(data, 'student-service/cmn/batchDeleteInfo', callback);
     },
     doChecked: function (data, callback) { // 通用 批量删除信息
-      this.requestUrl(data, 'checked/doChecked', callback);
+      this.requestPostUrl(data, 'student-service/checked/doChecked', callback);
     },
     queryProductType: function (data, callback) { // 通用 批量删除信息
-      this.requestUrl(data, 'productType/queryProductType', callback);
+      this.requestPostUrl(data, 'student-service/productType/queryProductType', callback);
     },
     findMenuTree: function (data, callback) {  //角色菜单查询
-      this.requestUrl(data, 'menu/findMenuTree', callback);
+      this.requestPostUrl(data, 'student-service/menu/findMenuTree', callback);
     },
     deleteRoleByRoleId: function (data, callback) {  //删除角色
-      this.requestUrl(data, 'role/deleteRoleByRoleId', callback);
+      this.requestPostUrl(data, 'student-service/role/deleteRoleByRoleId', callback);
     },
     saveRoleMenus: function (data, callback) {  //角色菜单新增
-      this.requestUrl(data, 'role/saveRoleMenus', callback);
+      this.requestPostUrl(data, 'student-service/role/saveRoleMenus', callback);
     },
     getTxVideoSign: function (data, callback) {
-      this.requestUrl(data, 'cmn/getTxVideoSign', callback)//查询用户信息
+      this.requestPostUrl(data, 'student-service/cmn/getTxVideoSign', callback)//查询用户信息
     },
     editRole: function (data, callback) {  //修改角色
-      this.requestUrl(data, 'menu/editRole', callback);
+      this.requestPostUrl(data, 'student-service/menu/editRole', callback);
     },
     getTxVideoTaskInfo: function (data, callback) {
-      this.requestUrl(data, 'cmn/getTxVideoTaskInfo', callback);
+      this.requestPostUrl(data, 'student-service/cmn/getTxVideoTaskInfo', callback);
     },
     checkPhoneSystem() {
       var u = navigator.userAgent,
@@ -230,15 +284,15 @@ export default {
     if (r != null) return unescape(r[2]);
     return null;
   },
-  getHost(servicename) {
-    return this.request.gethostPath(servicename);
+  getHost() {
+    return this.request.gethostPath();
   },
-  getUpLoadHost(servicename) {
-    return this.gethostPath(servicename) + "cmn/imgUpload";
+  getUpLoadHost() {
+    return this.gethostPath() + "cmn/imgUpload";
   },
 
-  getVideoUpLoadHost(servicename) {
-    return this.gethostPath(servicename) + "cmn/videoUpload";
+  getVideoUpLoadHost() {
+    return this.gethostPath() + "cmn/videoUpload";
   },
 
   isNull(data) {
