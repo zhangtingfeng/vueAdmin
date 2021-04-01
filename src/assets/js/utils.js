@@ -18,7 +18,7 @@ export default {
       } else if (letpathNODE_ENV === 'developmentEreka') {
         letpath = '/';
       } else if (letpathNODE_ENV === 'production') {
-        letpath = 'http://api.edu.eggsoft.cn/';
+        letpath = '/';
       }
 
       return letpath;
@@ -90,10 +90,10 @@ export default {
       });
     },
     requestGetUrl( argurl, callback) {
-      var params = {};
-      params = {
+      var paramsdata = {};
+      paramsdata = {
         'loginChannel': 'pc',
-        'token': localStorage.getItem('token'),
+        'token': localStorage.getItem('vtoken'),
         'sign': 'qazwsxedc'
       }
 
@@ -110,13 +110,11 @@ export default {
       }
 
 
-      //debugger;
-      axios.get(url, (params),
-        {
-          headers: {
+      debugger;
+      axios.get(url, {params:paramsdata,
+          headers:{
             'headRouter':  argurl
-          }
-        }
+          }}
       ).then(rsp => {
 
 
