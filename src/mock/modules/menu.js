@@ -1,4 +1,4 @@
-/* 
+/*
  * 菜单管理模块
  */
 
@@ -299,7 +299,7 @@ export function findNavTree() {
     }]
   }
   return {
-    url: 'menu/findNavTree',
+    url: 'SysMenu/findNavTree',
     type: 'get',
     data: navTreeData
   }
@@ -942,7 +942,7 @@ export function findMenuTree() {
     }]
   }
   return {
-    url: 'menu/findMenuTree',
+    url: 'SysMenu/findMenuTree',
     type: 'get',
     data: menuTreeData
   }

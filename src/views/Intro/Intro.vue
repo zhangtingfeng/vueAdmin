@@ -189,8 +189,8 @@
 
                 this.utils.request.queryUserPage(_this.incomefilters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.incomeRow = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.incomeRow = res.data.rows[0];
                     }
                 });
             },
@@ -201,8 +201,8 @@
 
                 this.utils.request.queryUserPage(_this.incoeNumfilters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.incomeOrderNumRow = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.incomeOrderNumRow = res.data.rows[0];
                     }
                 });
             },
@@ -213,8 +213,8 @@
 
                 this.utils.request.queryUserPage(_this.incoeUserNumfilters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.incomeUserNumRow = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.incomeUserNumRow = res.data.rows[0];
                     }
                 });
             },
@@ -225,8 +225,8 @@
 
                 this.utils.request.queryUserPage(_this.incoeUserfilters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.incomeUserRow = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.incomeUserRow = res.data.rows[0];
                     }
                 });
             },
@@ -237,8 +237,8 @@
 
                 this.utils.request.queryUserPage(_this.incoeUserShareNumfilters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.incomeUserShareNumRow = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.incomeUserShareNumRow = res.data.rows[0];
                     }
                 });
             },
@@ -249,8 +249,8 @@
 
                 this.utils.request.queryUserPage(_this.StatisticsIncome1filters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.StatisticsIncome1Row = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.StatisticsIncome1Row = res.data.rows[0];
                     }
                 });
             },
@@ -261,8 +261,8 @@
 
                 this.utils.request.queryUserPage(_this.Statisticsincome_type10filters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.income_type10Row = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.income_type10Row = res.data.rows[0];
                     }
                 });
             },
@@ -273,8 +273,8 @@
 
                 this.utils.request.queryUserPage(_this.user_account_extractfilters, function (res) {
                     //debugger;
-                    if (res.rows != null) {
-                        _this.user_account_extractRow = res.rows[0];
+                    if (res.data.rows != null) {
+                        _this.user_account_extractRow = res.data.rows[0];
                     }
                 });
             },

@@ -45,7 +45,7 @@ export default {
       this.utils.request.queryUserPage(filters, res => {
         if ((res.code = "0000")) {
           this.total = res.total;
-          this.tableData = res.rows;
+          this.tableData = res.data.rows;
           this.$emit("changeErrorSize", res.total);
         }
       });

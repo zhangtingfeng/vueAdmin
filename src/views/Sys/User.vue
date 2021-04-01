@@ -9,7 +9,7 @@
         <el-form-item>
           <kt-button
             icon="fa fa-search"
-            :label="$t('action.search')" 
+            :label="$t('action.search')"
             type="primary"
             @click="$refs.CyTable.findPageBeforeRestPages(filters)"
           />
@@ -17,7 +17,7 @@
         <el-form-item>
           <kt-button
             icon="fa fa-plus"
-            :label="$t('action.add')" 
+            :label="$t('action.add')"
             type="primary"
             @click="handleAdd"
           />
@@ -60,7 +60,7 @@
     </div>
     <!--表格内容栏-->
     <cy-table
-      :height="350" 
+      :height="350"
       :data="pageResult"
       :columns="filterColumns"
       @findPage="findPage"
@@ -83,7 +83,7 @@
         :size="size"
         label-position="right"
       >
-        <input type="password" style="display: none;" />
+        <input type="password" style="display: none;"/>
         <el-form-item label="ID" prop="id" v-if="false">
           <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
         </el-form-item>
@@ -175,325 +175,332 @@
           type="primary"
           @click.native="submitForm"
           :loading="editLoading"
-        >{{$t('action.submit')}}</el-button>
+        >{{$t('action.submit')}}
+        </el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import PopupTreeInput from "@/components/PopupTreeInput";
-import CyTable from "@/views/Core/CyTable";
-import KtButton from "@/views/Core/KtButton";
-import TableColumnFilterDialog from "@/views/Core/TableColumnFilterDialog";
-import { format } from "@/utils/datetime";
-import { exportExcel } from "@/utils/excel";
-export default {
-  components: {
-    PopupTreeInput,
-    CyTable,
-    KtButton,
-    TableColumnFilterDialog
-  },
-  data() {
-    return {
-      size: "small",
-      filters: {
-        username: "",
-        t: "sysUser"
-      },
-      columns: [],
-      filterColumns: [],
-      pageRequest: { pageNum: 1, pageSize: 10 },
-      pageResult: {},
+    import PopupTreeInput from "@/components/PopupTreeInput";
+    import CyTable from "@/views/Core/CyTable";
+    import KtButton from "@/views/Core/KtButton";
+    import TableColumnFilterDialog from "@/views/Core/TableColumnFilterDialog";
+    import {format} from "@/utils/datetime";
+    import {exportExcel} from "@/utils/excel";
 
-      operation: false, // true:新增, false:编辑
-      dialogVisible: false, // 新增编辑界面是否显示
-      editLoading: false,
-      dataFormRules: {
-        name: [{ required: true, message: "请输入用户名", trigger: "blur" }]
-      },
-      // 新增编辑界面数据
-      dataForm: {
-        id: 0,
-        name: "",
-        password: "",
-        deptid: "",
-        deptname: "",
-        email: "",
-        moile: "",
-        status: 1,
-        userRoles: [],
-        account: "",
-        pid: "",
-        number: "",
-        username: ""
-      },
-      deptData: [],
-      deptTreeProps: {
-        label: "dept_name",
-        children: "children"
-      },
-      roles: [],
-      options: [],
-      paswordTemp: ""
-    };
-  },
-  methods: {
-    remoteMethod: function(query) {
-      if (query !== "") {
-        //查询后台客户信息
-        var search = {};
-        search.t = "sysUser";
-        search.username = query;
-        var this_ = this;
-        this.utils.request.queryUserList(search, function(res) {
-          this_.options = res.data;
-        });
-      } else {
-        this.options = [];
-      }
-    },
-    choseCustomer: function(selVal) {
-      var temp = this.options;
-      var this_ = this;
-
-      if (selVal == "" || selVal == null) {
-        this_.dataForm.manager_name = "";
-        this_.dataForm.manager_mobile = "";
-      } else {
-        $.each(temp, function(key, val) {
-          if (val.id == selVal) {
-            this_.dataForm.manager_name = val.manager_name;
-            this_.dataForm.manager_mobile = val.manager_mobile;
-            return;
-          }
-        });
-      }
-    },
-    // 获取分页数据
-    findPage: function(data) {
-      this.$refs.CyTable.findPage(this.filters);
-    },
-    // 加载用户角色信息
-    findUserRoles: function() {
-      var this_ = this;
-      let query = {};
-      query.t = "sysRole";
-      this.utils.request.queryUserList(query, function(res) {
-        if (res.code == "0000") {
-          this_.roles = res.data;
-        } else {
-        }
-      });
-    },
-    // 批量删除
-    handleDelete: function(data) {
-      if (data != null && data.params != null && data.params.length > 0) {
-        let ids = data.params.map(item => item.id).toString();
-
-        var params = {};
-        params.t = "sysUser";
-        params.ids = ids;
-        var this_ = this;
-        this.utils.request.batchDeleteInfo(params, function(res) {
-          if (res.code == "0000") {
-            this_.$message({ message: "操作成功", type: "success" });
-            this_.findPage(null);
-          } else {
-            this_.$message({ message: "操作失败, " + res.msg, type: "error" });
-          }
-        });
-      }
-    },
-    // 显示新增界面
-    handleAdd: function() {
-      this.dialogVisible = true;
-      this.operation = true;
-      this.dataForm = {
-        id: "",
-        name: "",
-        password: "",
-        deptid: "",
-        deptname: "",
-        email: "",
-        moile: "",
-        status: 1,
-        userRoles: [1],
-        account: "",
-        pid: "",
-        number: "",
-        username: ""
-      };
-    },
-    // 显示编辑界面
-    handleEdit: function(params) {
-      this.dialogVisible = true;
-      this.operation = false;
-      this.paswordTemp = params.row.password;
-
-      this.dataForm = {
-        id: params.row.id,
-        name: params.row.name,
-        password: params.row.password,
-        deptid: params.row.deptid,
-        deptname: params.row.deptname,
-        email: params.row.email,
-        moile: params.row.moile,
-        status: 1,
-        userRoles: [],
-        account: params.row.account,
-        pid: params.row.pid,
-        number: params.row.number,
-        username: params.row.username,
-        pname: params.row.pname
-      };
-
-      let userRoles = [];
-      if (!this.utils.isNull(params.row.role_id_list)) {
-        let idList = params.row.role_id_list.split(",");
-
-        $.each(idList, function(key, value) {
-          userRoles.push(Number(value));
-        });
-      }
-      this.options = [];
-      if (this.dataForm.pid == 0) {
-        this.dataForm.pname = " ";
-      }
-
-      this.options.push({
-        username: this.dataForm.pname,
-        id: this.dataForm.pid
-      });
-
-      this.dataForm.userRoles = userRoles;
-    },
-    // 编辑
-    submitForm: function() {
-      this.$refs.dataForm.validate(valid => {
-        if (valid) {
-          this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            let params = Object.assign({}, this.dataForm);
-            let userRoles = [];
-            for (let i = 0, len = params.userRoles.length; i < len; i++) {
-              let userRole = {
-                userId: params.id,
-                roleId: params.userRoles[i]
-              };
-              userRoles.push(userRole);
-            }
-
-            params.userRoles = userRoles.map(item => item.roleId).toString();
-
-            if (this.paswordTemp == params.password) {
-              delete params.password;
-            }
-
-            if (this.utils.isNull(params.pid)) {
-              params.pid = 0;
-            }
-
-            var this_ = this;
-
-            this.utils.request.editUser(params, function(res) {
-              if (res.code == "0000") {
-                this_.$message({ message: "操作成功", type: "success" });
-                this_.dialogVisible = false;
-                this_.$refs["dataForm"].resetFields();
-                this_.findPage(null);
-              } else {
-                this_.$message({
-                  message: "操作失败, " + res.msg,
-                  type: "error"
-                });
-              }
-            });
-          });
-        }
-      });
-    },
-    // 获取部门列表
-    findDeptTree: function() {
-      var this_ = this;
-
-      this.utils.request.findDeptTree({}, function(res) {
-        if (res.code == "0000") {
-          this_.deptData = res.data;
-        } else {
-        }
-      });
-    },
-    // 菜单树选中
-    deptTreeCurrentChangeHandle(data, node) {
-      console.log(data);
-      this.dataForm.deptid = data.id;
-      this.dataForm.deptname = data.dept_name;
-    },
-    // 时间格式化
-    dateFormat: function(row, column, cellValue, index) {
-      if (Number(cellValue) == 1) {
-        return "在职";
-      }
-      return "离职";
-    },
-    // 处理表格列过滤显示
-    displayFilterColumnsDialog: function() {
-      this.$refs.tableColumnFilterDialog.setDialogVisible(true);
-    },
-    // 处理表格列过滤显示
-    handleFilterColumns: function(data) {
-      this.filterColumns = data.filterColumns;
-      this.$refs.tableColumnFilterDialog.setDialogVisible(false);
-    },
-    // 处理表格列过滤显示
-    initColumns: function() {
-      this.columns = [
-        { prop: "username", label: "用户名", minWidth: 120 },
-        { prop: "account", label: "登录账号", minWidth: 120 },
-        // { prop: "deptname", label: "机构", minWidth: 120 },
-        { prop: "rolename", label: "角色", minWidth: 100 },
-        // { prop: "number", label: "工号", minWidth: 120 },
-        { prop: "moile", label: "手机", minWidth: 100 },
-        {
-          prop: "status",
-          label: "状态",
-          minWidth: 70,
-          formatter: this.dateFormat
+    export default {
+        components: {
+            PopupTreeInput,
+            CyTable,
+            KtButton,
+            TableColumnFilterDialog
         },
-        { prop: "pname", label: "上级名称", minWidth: 120 }
-      ];
-      var temp = [];
-      $.each(this.columns, function(key, val) {
-        temp.push(val);
-      });
-      this.filterColumns = temp;
-    },
+        data() {
+            return {
+                size: "small",
+                filters: {
+                    username: "",
+                    t: "sysUser"
+                },
+                columns: [],
+                filterColumns: [],
+                pageRequest: {pageNum: 1, pageSize: 10},
+                pageResult: {},
 
-    //列表下载
-    downloadExcel() {
-      this.$confirm("确定下载列表文件?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          exportExcel(this.pageResult.content, this.filterColumns);
-        })
-        .catch(() => {});
-    },
-    reset: function() {
-      this.$refs["filters"].resetFields();
-      this.$refs.CyTable.resetForm();
-      this.findPage();
-    }
-  },
-  mounted() {
-    this.findDeptTree();
-    this.initColumns();
-    this.findUserRoles();
-  }
-};
+                operation: false, // true:新增, false:编辑
+                dialogVisible: false, // 新增编辑界面是否显示
+                editLoading: false,
+                dataFormRules: {
+                    name: [{required: true, message: "请输入用户名", trigger: "blur"}]
+                },
+                // 新增编辑界面数据
+                dataForm: {
+                    id: 0,
+                    name: "",
+                    password: "",
+                    deptid: "",
+                    deptname: "",
+                    email: "",
+                    moile: "",
+                    status: 1,
+                    userRoles: [],
+                    account: "",
+                    pid: "",
+                    number: "",
+                    username: ""
+                },
+                deptData: [],
+                deptTreeProps: {
+                    label: "dept_name",
+                    children: "children"
+                },
+                roles: [],
+                options: [],
+                paswordTemp: ""
+            };
+        },
+        methods: {
+            remoteMethod: function (query) {
+                //debugger;
+                if (query !== "") {
+                    //查询后台客户信息
+                    var search = {};
+                    search.t = "sysUser";
+                    search.username = query;
+                    var this_ = this;
+                    this.utils.request.queryUserList(search, function (res) {
+                        debugger;
+                        this_.options = res.data;
+                    });
+                } else {
+                    this.options = [];
+                }
+            },
+            choseCustomer: function (selVal) {
+                var temp = this.options;
+                var this_ = this;
+
+                if (selVal == "" || selVal == null) {
+                    this_.dataForm.manager_name = "";
+                    this_.dataForm.manager_mobile = "";
+                } else {
+                    $.each(temp, function (key, val) {
+                        if (val.id == selVal) {
+                            this_.dataForm.manager_name = val.manager_name;
+                            this_.dataForm.manager_mobile = val.manager_mobile;
+                            return;
+                        }
+                    });
+                }
+            },
+            // 获取分页数据
+            findPage: function (data) {
+                debugger;
+                this.$refs.CyTable.findPage(this.filters);
+            },
+            // 加载用户角色信息
+            findUserRoles: function () {
+                debugger;
+                var this_ = this;
+                let query = {};
+                query.t = "sysRole";
+                this.utils.request.queryUserList(query, function (res) {
+                    if (res.code == 200) {
+                        this_.roles = res.data;
+                    } else {
+                    }
+                });
+            },
+            // 批量删除
+            handleDelete: function (data) {
+                if (data != null && data.params != null && data.params.length > 0) {
+                    let ids = data.params.map(item => item.id).toString();
+
+                    var params = {};
+                    params.t = "sysUser";
+                    params.ids = ids;
+                    var this_ = this;
+                    this.utils.request.batchDeleteInfo(params, function (res) {
+                        if (res.code == 200) {
+                            this_.$message({message: "操作成功", type: "success"});
+                            this_.findPage(null);
+                        } else {
+                            this_.$message({message: "操作失败, " + res.msg, type: "error"});
+                        }
+                    });
+                }
+            },
+            // 显示新增界面
+            handleAdd: function () {
+                this.dialogVisible = true;
+                this.operation = true;
+                this.dataForm = {
+                    id: "",
+                    name: "",
+                    password: "",
+                    deptid: "",
+                    deptname: "",
+                    email: "",
+                    moile: "",
+                    status: 1,
+                    userRoles: [1],
+                    account: "",
+                    pid: "",
+                    number: "",
+                    username: ""
+                };
+            },
+            // 显示编辑界面
+            handleEdit: function (params) {
+                this.dialogVisible = true;
+                this.operation = false;
+                this.paswordTemp = params.row.password;
+
+                this.dataForm = {
+                    id: params.row.id,
+                    name: params.row.name,
+                    password: params.row.password,
+                    deptid: params.row.deptid,
+                    deptname: params.row.deptname,
+                    email: params.row.email,
+                    moile: params.row.moile,
+                    status: 1,
+                    userRoles: [],
+                    account: params.row.account,
+                    pid: params.row.pid,
+                    number: params.row.number,
+                    username: params.row.username,
+                    pname: params.row.pname
+                };
+
+                let userRoles = [];
+                if (!this.utils.isNull(params.row.role_id_list)) {
+                    let idList = params.row.role_id_list.split(",");
+
+                    $.each(idList, function (key, value) {
+                        userRoles.push(Number(value));
+                    });
+                }
+                this.options = [];
+                if (this.dataForm.pid == 0) {
+                    this.dataForm.pname = " ";
+                }
+
+                this.options.push({
+                    username: this.dataForm.pname,
+                    id: this.dataForm.pid
+                });
+
+                this.dataForm.userRoles = userRoles;
+            },
+            // 编辑
+            submitForm: function () {
+                this.$refs.dataForm.validate(valid => {
+                    if (valid) {
+                        this.$confirm("确认提交吗？", "提示", {}).then(() => {
+                            let params = Object.assign({}, this.dataForm);
+                            let userRoles = [];
+                            for (let i = 0, len = params.userRoles.length; i < len; i++) {
+                                let userRole = {
+                                    userId: params.id,
+                                    roleId: params.userRoles[i]
+                                };
+                                userRoles.push(userRole);
+                            }
+
+                            params.userRoles = userRoles.map(item => item.roleId).toString();
+
+                            if (this.paswordTemp == params.password) {
+                                delete params.password;
+                            }
+
+                            if (this.utils.isNull(params.pid)) {
+                                params.pid = 0;
+                            }
+
+                            var this_ = this;
+
+                            this.utils.request.editUser(params, function (res) {
+                                if (res.code == 200) {
+                                    this_.$message({message: "操作成功", type: "success"});
+                                    this_.dialogVisible = false;
+                                    this_.$refs["dataForm"].resetFields();
+                                    this_.findPage(null);
+                                } else {
+                                    this_.$message({
+                                        message: "操作失败, " + res.msg,
+                                        type: "error"
+                                    });
+                                }
+                            });
+                        });
+                    }
+                });
+            },
+            // 获取部门列表
+            findDeptTree: function () {
+                var this_ = this;
+
+                this.utils.request.findDeptTree({}, function (res) {
+                    if (res.code == 200) {
+                        this_.deptData = res.data;
+                    } else {
+                    }
+                });
+            },
+            // 菜单树选中
+            deptTreeCurrentChangeHandle(data, node) {
+                console.log(data);
+                this.dataForm.deptid = data.id;
+                this.dataForm.deptname = data.dept_name;
+            },
+            // 时间格式化
+            dateFormat: function (row, column, cellValue, index) {
+                if (Number(cellValue) == 1) {
+                    return "在职";
+                }
+                return "离职";
+            },
+            // 处理表格列过滤显示
+            displayFilterColumnsDialog: function () {
+                this.$refs.tableColumnFilterDialog.setDialogVisible(true);
+            },
+            // 处理表格列过滤显示
+            handleFilterColumns: function (data) {
+                this.filterColumns = data.filterColumns;
+                this.$refs.tableColumnFilterDialog.setDialogVisible(false);
+            },
+            // 处理表格列过滤显示
+            initColumns: function () {
+                this.columns = [
+                    {prop: "username", label: "用户名", minWidth: 120},
+                    {prop: "account", label: "登录账号", minWidth: 120},
+                    // { prop: "deptname", label: "机构", minWidth: 120 },
+                    {prop: "rolename", label: "角色", minWidth: 100},
+                    // { prop: "number", label: "工号", minWidth: 120 },
+                    {prop: "moile", label: "手机", minWidth: 100},
+                    {
+                        prop: "status",
+                        label: "状态",
+                        minWidth: 70,
+                        formatter: this.dateFormat
+                    },
+                    {prop: "pname", label: "上级名称", minWidth: 120}
+                ];
+                var temp = [];
+                $.each(this.columns, function (key, val) {
+                    temp.push(val);
+                });
+                this.filterColumns = temp;
+            },
+
+            //列表下载
+            downloadExcel() {
+                this.$confirm("确定下载列表文件?", "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning"
+                })
+                    .then(() => {
+                        exportExcel(this.pageResult.content, this.filterColumns);
+                    })
+                    .catch(() => {
+                    });
+            },
+            reset: function () {
+                this.$refs["filters"].resetFields();
+                this.$refs.CyTable.resetForm();
+                this.findPage();
+            }
+        },
+        mounted() {
+            this.findDeptTree();
+            this.initColumns();
+            this.findUserRoles();
+        }
+    };
 </script>
 
 <style scoped>

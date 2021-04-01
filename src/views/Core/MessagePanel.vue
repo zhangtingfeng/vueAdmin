@@ -5,7 +5,7 @@
     <div class="message-content">
       <div v-for="item in tableData" :key="item.in_batch_number" class="message-item">
         <span class="sender">{{ item.client_name }}</span>
-        <span class="time"> 
+        <span class="time">
           {{ item.warning_days }}天
         </span>
         <div class="message-cotent">{{ item.sku_name }} 已经到达 {{item.warningday}} 保质期预警</div>
@@ -42,12 +42,12 @@ export default {
       filters.limit = 5;
       filters.max_warning_days = -1;
       filters.min_is_expired_days = 0;
-      filters.sendemail = 1; 
+      filters.sendemail = 1;
 
       this.utils.request.queryUserPage(filters, res => {
         if ((res.code = "0000")) {
           this.total = res.total;
-          this.tableData = res.rows; 
+          this.tableData = res.data.rows;
           this.$emit("changeWarnSize", res.total);
         }
       });

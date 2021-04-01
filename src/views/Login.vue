@@ -126,14 +126,14 @@ export default {
 
       this.loading = true;
 
-      queryParam.vtoken = localStorage.getItem("vtoken");
+      queryParam.token = localStorage.getItem("vtoken");
       this.utils.request.login(queryParam, function(response) {
         this_.loading = false;
 
         var message = response.msg;
         var code = response.code;
 
-        if (code == "0000") {
+        if (code == 200) {
           var data = response.data;
 
           localStorage.setItem("token", data.token);

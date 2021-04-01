@@ -150,7 +150,7 @@ export default {
         params.ids = ids;
         var this_ = this;
         this.utils.request.batchDeleteInfo(params, function(res) {
-          if (res.code == "0000") {
+          if (res.code == 200) {
             this_.$message({ message: "操作成功", type: "success" });
             this_.findPage(null);
           } else {
@@ -187,7 +187,7 @@ export default {
             params.t = "sysConfig";
             var this_ = this;
             this.utils.request.editInfo(params, function(res) {
-              if (res.code == "0000") {
+              if (res.code == 200) {
                 this_.$message({ message: "操作成功", type: "success" });
 
                 this_.$refs["dataForm"].resetFields();

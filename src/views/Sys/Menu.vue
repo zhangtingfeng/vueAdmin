@@ -344,7 +344,7 @@ export default {
     },
     // 新增修改回调
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.dialogVisible = false;
         this.$refs["dataForm"].resetFields();

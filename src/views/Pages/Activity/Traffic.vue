@@ -260,7 +260,7 @@ export default {
     },
     //编辑方法
     handleEdit(params){
-      
+
        this.checkpage = true;
        this.operation = false;
       this.$nextTick(function() {
@@ -273,13 +273,13 @@ export default {
       search.t = "trafficService";
 
       this.utils.request.queryUserInfo(search, function(res) {
-        if (res.code == "0000") {
+        if (res.code == 200) {
           this_.tableData = res.data;
           if(res.data.pic !='' && res.data.pic !=undefined){
             this_.bill_photo_list = this_.dataForm.pic.split(",");
              this_.dataForm.pic = "";
           }
-         
+
         } else if(res.code == "9999") {
           this_.$message({ message: "获取产品信息异常", type: "error" });
         }
@@ -300,7 +300,7 @@ export default {
       });
     }, // 新增修改回调
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
       } else {
         this.$message({ message: "操作失败, ", type: "error" });
@@ -369,12 +369,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除
@@ -485,7 +485,7 @@ export default {
     },
     handleExcelSuccess(res, file) {
       let fileUrl = URL.createObjectURL(file.raw);
-      if (res.code == "0000") {
+      if (res.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.findPage();
       } else {
@@ -496,7 +496,7 @@ export default {
       console.log(file);
       return true;
     },
-    
+
   },
   mounted() {
     this.initColumns();

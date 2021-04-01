@@ -1,4 +1,4 @@
- 
+
 <template>
   <div class="page-container">
     <!--工具栏-->
@@ -125,12 +125,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除
@@ -152,7 +152,7 @@ export default {
       this.$message({ message: "操作成功", type: "success" });
     },
 
-    selectionChange: function(params) { 
+    selectionChange: function(params) {
       this.checked = params.selections;
     },
 
@@ -193,7 +193,7 @@ export default {
     }
   },
   mounted() {
-    this.initColumns(); 
+    this.initColumns();
   }
 };
 </script>

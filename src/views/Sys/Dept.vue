@@ -130,7 +130,7 @@ export default {
       filters: {
         dept_name: ""
       },
-      tableTreeDdata: [], 
+      tableTreeDdata: [],
       dialogVisible: false,
       dataForm: {
         id: 0,
@@ -163,11 +163,11 @@ export default {
 
       this.utils.request.findDeptTree(params, function(res) {
         if (res.data != null && res.data.length > 0) {
-          this_.tableTreeDdata = res.data; 
+          this_.tableTreeDdata = res.data;
           this_.popupTreeData = this_.getParentMenuTree(res.data);
-          this_.total = res.data[0].total; 
+          this_.total = res.data[0].total;
         } else {
-          this_.tableTreeDdata = []; 
+          this_.tableTreeDdata = [];
         }
       });
     },
@@ -220,7 +220,7 @@ export default {
     },
     //删除callback
     deleteInfoBack(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
       } else {
         this.$message({ message: "操作失败, ", type: "error" });
@@ -259,7 +259,7 @@ export default {
             }
             if (this.utils.isNull(params.status)) {
               params.status = 0;
-            } 
+            }
 
             params.sort = this.total + 1;
 
@@ -269,7 +269,7 @@ export default {
       });
     },
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.$refs["dataForm"].resetFields();
       } else {
@@ -286,11 +286,11 @@ export default {
     dealWithTreeData() {
       var params = Object.assign({}, this.filters);
       this.utils.request.selectDeptTree(params, res => {
-        if (res.data != null && res.data.length > 0) { 
-          this.deleteOthers(this.tableTreeDdata, res.data);  
+        if (res.data != null && res.data.length > 0) {
+          this.deleteOthers(this.tableTreeDdata, res.data);
         }
       });
-    
+
     },
 
     deleteOthers(arrList, idList) {
@@ -307,7 +307,7 @@ export default {
       }
     },
 
-    
+
   },
   mounted() {
     this.findTreeData();

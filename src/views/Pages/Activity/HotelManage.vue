@@ -127,10 +127,10 @@
           <el-form-item label="纬度" prop="latitude">
             <el-input v-model="dataForm.latitude"  type="textara" auto-complete="off"></el-input>
           </el-form-item>
-      
-        
+
+
           <el-form-item label="描述" prop="description">
-              <el-input v-model="dataForm.description"  auto-complete="off" style="width:850px" 
+              <el-input v-model="dataForm.description"  auto-complete="off" style="width:850px"
               type="textarea" maxlength="200" placeholder="描述为0-200个字符" show-word-limit></el-input>
             </el-form-item>
       </el-row>
@@ -345,7 +345,7 @@ export default {
     },
     //新增页面
     addHotel(){
-    
+
      this.operation=true;
      this.checkpage=true;
      if (this.$refs["dataForm"] != undefined) {
@@ -378,21 +378,21 @@ export default {
     },
     //编辑方法
     handleEdit(params){
-      
+
        this.checkpage = true;
        this.operation = false;
       this.$nextTick(function() {
         this.dataForm = Object.assign({}, params.row);
       });
-     
-      
+
+
       var this_ = this;
       var search = {};
       search.id = params.row.id;
       search.t = "hotel";
 
       this.utils.request.queryUserInfo(search, function(res) {
-        if (res.code == "0000") {
+        if (res.code == 200) {
           this_.tableData = res.data;
           if(res.data.pic !='' && res.data.pic !=undefined){
             this_.bill_photo_list = this_.dataForm.pic.split(",");
@@ -400,7 +400,7 @@ export default {
              this_.bill_photo_list2 = this_.dataForm.carousel.split(",");
              this_.dataForm.carousel = "";
           }
-         
+
         } else if(res.code == "9999") {
           this_.$message({ message: "获取产品信息异常", type: "error" });
         }
@@ -415,7 +415,7 @@ export default {
             let params = Object.assign({}, this.dataForm);
             params.t = "hotel";
             // parma.tableData = JSON.stringify(this.tableData);
-          
+
             var documentlicense = params.pic.split(",");
             var documentlicense2 = params.carousel.split(",");
             //连接两个数组
@@ -446,7 +446,7 @@ export default {
       });
     }, // 新增修改回调
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
       } else {
         this.$message({ message: "操作失败, ", type: "error" });
@@ -548,12 +548,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除
@@ -682,7 +682,7 @@ export default {
     },
     handleExcelSuccess(res, file) {
       let fileUrl = URL.createObjectURL(file.raw);
-      if (res.code == "0000") {
+      if (res.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.findPage();
       } else {
@@ -693,7 +693,7 @@ export default {
       console.log(file);
       return true;
     },
-    
+
   },
   mounted() {
     this.initColumns();

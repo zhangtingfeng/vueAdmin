@@ -166,7 +166,7 @@
       </div>
     </el-main>
     <!-- <el-row style="text-align:center">
-      
+
     </el-row>-->
 
     <!-- 咨询详情 -->
@@ -406,7 +406,7 @@ export default {
           this_.editLoading = true;
           this_.utils.request.editInfo(params, res => {
             this_.editLoading = false;
-            if (res.code == "0000") {
+            if (res.code == 200) {
               this.$message({ message: "操作成功", type: "success" });
               this.findPage();
               this.newsModel = false;
@@ -478,7 +478,7 @@ export default {
           t: "userNews"
         },
         function(res) {
-          if (res.code == "0000") {
+          if (res.code == 200) {
             this_.$message({ message: "审核完成", type: "success" });
             this_.dialogVisibleReviw = false;
             this_.findPage();
@@ -527,10 +527,10 @@ export default {
       this.$refs.tableData3.clearSelection();
       this_.filters.type = "";
       this.utils.request.queryUserPage(this_.filters, function(res) {
-        if (res.rows == null) {
-          res.rows = [];
+        if (res.data.rows == null) {
+          res.data.rows = [];
         }
-        this_.tableData = res.rows;
+        this_.tableData = res.data.rows;
       });
     },
 
@@ -552,37 +552,37 @@ export default {
         let this_ = this;
         this_.filters.type = 0;
         this.utils.request.queryUserPage(this_.filters, function(res) {
-          if (res.rows == null) {
-            res.rows = [];
+          if (res.data.rows == null) {
+            res.data.rows = [];
           }
-          this_.headTable = res.rows;
+          this_.headTable = res.data.rows;
         });
       } else if (tab.name == "1") {
         let this_ = this;
         this_.filters.type = 1;
         this.utils.request.queryUserPage(this_.filters, function(res) {
-          if (res.rows == null) {
-            res.rows = [];
+          if (res.data.rows == null) {
+            res.data.rows = [];
           }
-          this_.estateTable = res.rows;
+          this_.estateTable = res.data.rows;
         });
       } else if (tab.name == "2") {
         let this_ = this;
         this_.filters.type = 2;
         this.utils.request.queryUserPage(this_.filters, function(res) {
-          if (res.rows == null) {
-            res.rows = [];
+          if (res.data.rows == null) {
+            res.data.rows = [];
           }
-          this_.logisticsTable = res.rows;
+          this_.logisticsTable = res.data.rows;
         });
       } else if (tab.name == "4") {
         let this_ = this;
         this_.filters.type = "";
         this.utils.request.queryUserPage(this_.filters, function(res) {
-          if (res.rows == null) {
-            res.rows = [];
+          if (res.data.rows == null) {
+            res.data.rows = [];
           }
-          this_.tableData = res.rows;
+          this_.tableData = res.data.rows;
         });
       }
     },
@@ -598,9 +598,9 @@ export default {
         this_.newsModel = true;
 
         this.$nextTick(() => {
-          let this_ = this; 
+          let this_ = this;
           this.dataForm = Object.assign({}, data.data);
-          this.picList = []; 
+          this.picList = [];
 
           if (this.dataForm.picture) {
             $.each(this.dataForm.picture.split(","), function(key, val) {
@@ -612,10 +612,10 @@ export default {
               }
             });
           }
-          
+
         });
 
-        
+
       });
     },
 

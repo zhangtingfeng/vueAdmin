@@ -346,7 +346,7 @@
 
                      this.utils.request.getTxVideoTaskInfo(telentParam, res => {
                          debugger
-                         if (res.code == "0000") {
+                         if (res.code == 200) {
                              var data = res.data;
 
                              let status = data.status;
@@ -388,7 +388,7 @@
                         t: this.springBootActionName
                     },
                     function (res) {
-                        if (res.code == "0000") {
+                        if (res.code == 200) {
                             this_.$message({message: "提现操作完成", type: "success"});
                             this_.dialogVisibleReviw = false;
                             this_.findPage();
@@ -451,12 +451,12 @@
 
                     fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-                    if (res.rows == null || res.rows.length == 0) {
+                    if (res.data.rows == null || res.data.rows.length == 0) {
                         this.$message({message: "暂无需要导出的数据 ", type: "error"});
                         return;
                     }
 
-                    exportExcel(res.rows, filterColumns, fileName);
+                    exportExcel(res.data.rows, filterColumns, fileName);
                 });
             },
             // 批量删除
@@ -471,7 +471,7 @@
                 this.utils.request.deleteUserInfo(data, this.deleteInfoBack);
             },
             deleteInfoBack: function (res) {
-                if (res.code == "0000") {
+                if (res.code == 200) {
                     this.$message({message: "操作成功", type: "success"});
                 } else {
                     this.$message({message: "操作失败", type: "error"});
@@ -614,7 +614,7 @@
             },
             handleExcelSuccess(res, file) {
                 let fileUrl = URL.createObjectURL(file.raw);
-                if (res.code == "0000") {
+                if (res.code == 200) {
                     this.$message({message: "操作成功", type: "success"});
                     this.findPage();
                 } else {

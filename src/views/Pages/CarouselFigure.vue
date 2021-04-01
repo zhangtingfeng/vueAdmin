@@ -299,7 +299,7 @@ export default {
     },
     //上传主图片成功
     handlePicSuccess: function(res, file) {
-      if (res && res.code == "0000" && res.data && res.data.imgUrl) {
+      if (res && res.code == 200 && res.data && res.data.imgUrl) {
         this.dataForm.pic = res.data.imgUrl;
         this.picFileList.push(res.data.imgUrl);
       }
@@ -372,7 +372,7 @@ export default {
     },
     // 新增修改回调
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.findPage();
         this.dialogVisible = false;

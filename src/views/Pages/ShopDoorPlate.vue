@@ -240,7 +240,7 @@ export default {
           var this_ = this;
           console.log("保存信息===>>>>>>>>>" + JSON.stringify(params));
           this.utils.request.editInfo(params, function(res) {
-            if (res.code == "0000") {
+            if (res.code == 200) {
               this_.$message({ message: "操作成功", type: "success" });
               this_.shopModel = false;
               this_.$refs["dataForm"].resetFields();

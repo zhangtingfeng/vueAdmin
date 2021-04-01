@@ -295,7 +295,7 @@ function addDynamicMenuAndRoutes(userId, to, from) {
 
   utils.request.findNavTree({ userid: userId }, function (response) {
     var code = response.code;
-    if (code == "0000") {
+    if (code == 200) {
       console.log(response.data)
       //添加动态路由
       let dynamicRoutes = addDynamicRoutes(response.data)
@@ -313,7 +313,7 @@ function addDynamicMenuAndRoutes(userId, to, from) {
 
   utils.request.findPermissions({ userid: userId }, function (response) {
     var code = response.code;
-    if (code == "0000") {
+    if (code == 200) {
 
       // 保存用户权限标识集合
       store.commit('setPerms', response.data)

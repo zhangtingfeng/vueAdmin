@@ -218,7 +218,7 @@ export default {
             params.ids = this_.checked.map(item => item.id).toString();
             params.showroom_type_id = this.showroom_type_id;
             this.utils.request.setShwoRoomShop(params, function(res) {
-              if (res.code == "0000") {
+              if (res.code == 200) {
                 this_.$message({ message: "操作成功", type: "success" });
                 this_.findPage();
                 // this_.$emit("closeShowroomShopShow");
@@ -268,12 +268,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        $.each(res.rows, (key, val) => {
+        $.each(res.data.rows, (key, val) => {
           if (val.type == 0) {
             val.type = "市场经营人员";
           } else if (val.type == 1) {
@@ -289,7 +289,7 @@ export default {
           }
         });
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除
@@ -331,7 +331,7 @@ export default {
           var this_ = this;
           console.log("保存信息===>>>>>>>>>" + JSON.stringify(params));
           this.utils.request.editInfo(params, function(res) {
-            if (res.code == "0000") {
+            if (res.code == 200) {
               this_.$message({ message: "操作成功", type: "success" });
               this_.shopModel = false;
               this_.$refs["dataForm"].resetFields();
@@ -380,7 +380,7 @@ export default {
       this.utils.request.doChecked(
         { ids: ids, checkEdStatus: customer_nature, t: "messageInfo" },
         function(res) {
-          if (res.code == "0000") {
+          if (res.code == 200) {
             this_.$message({ message: "审核完成", type: "success" });
             this_.checkpage = false;
             this_.findPage();
@@ -512,7 +512,7 @@ export default {
     },
     //上传主图片成功
     handlePicSuccess: function(res, file) {
-      if (res && res.code == "0000" && res.data && res.data.imgUrl) {
+      if (res && res.code == 200 && res.data && res.data.imgUrl) {
         this.dataForm.pic = res.data.imgUrl;
         this.picFileList.push(res.data.imgUrl);
       }
@@ -545,7 +545,7 @@ export default {
     //     search.username = query;
     //     var this_ = this;
     //     this.utils.request.queryUserPage(search, function(res) {
-    //       this_.options = res.rows;
+    //       this_.options = res.data.rows;
     //     });
     //   } else {
     //     this.options = [];

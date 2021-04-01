@@ -251,11 +251,11 @@ export default {
       filters.start = this.pageRequest.pageNum;
       filters.limit = this.pageRequest.pageSize;
       this.utils.request.queryUserPage(filters, function(res) {
-        if (res.rows == null) {
-          res.rows = [];
+        if (res.data.rows == null) {
+          res.data.rows = [];
         }
 
-        this_.content = res.rows;
+        this_.content = res.data.rows;
         this_.totalSize = Number(res.total);
 
         this_.$nextTick(() => {
@@ -264,7 +264,7 @@ export default {
             //初始化
             let showroom_type_id = filters.selections_type;
             let selections = filters.selections;
-            $.each(res.rows, (key, value) => {
+            $.each(res.data.rows, (key, value) => {
               if (value[showroom_type_id] == selections) {
                 indexList.push(value);
               }
@@ -297,10 +297,10 @@ export default {
       filters.start = 1;
       filters.limit = this.pageRequest.pageSize;
       this.utils.request.queryUserPage(filters, function(res) {
-        if (res.rows == null) {
-          res.rows = [];
+        if (res.data.rows == null) {
+          res.data.rows = [];
         }
-        this_.content = res.rows;
+        this_.content = res.data.rows;
         this_.totalSize = Number(res.total?res.total:0);
       });
     },
@@ -319,12 +319,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     init: function() {
@@ -384,7 +384,7 @@ export default {
           }
           //this.loading = true
           let callback = res => {
-            if (res.code == "0000") {
+            if (res.code == 200) {
               this.$message({ message: "删除成功", type: "success" });
               this.init();
             } else {

@@ -284,14 +284,14 @@
 import { mapState } from "vuex";
 import Cookies from "js-cookie";
 import ThemePicker from "@/components/ThemePicker";
-import LangSelector from "@/components/LangSelector"; 
+import LangSelector from "@/components/LangSelector";
 import Vue from "vue";
 
 export default {
   name: "Login",
   components: {
     ThemePicker,
-    LangSelector, 
+    LangSelector,
   },
   data() {
     return {
@@ -462,7 +462,7 @@ export default {
       });
     }, // 新增修改回调
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功,请等待审核", type: "success" });
         this.$router.push("/");
       } else {

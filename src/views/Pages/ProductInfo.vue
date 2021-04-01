@@ -253,7 +253,7 @@
     <el-upload
       :action="imgUpload"
       :on-success="handleSuccess"
-      :show-file-list="false" 
+      :show-file-list="false"
       accept="image/gif, image/jpeg, image/jpg, image/png, image/svg"
       :max-size="2048"
     >
@@ -441,7 +441,7 @@ export default {
           t: "product"
         },
         function(res) {
-          if (res.code == "0000") {
+          if (res.code == 200) {
             this_.$message({ message: "审核完成", type: "success" });
             this_.dialogVisibleReviw = false;
             this_.findPage();
@@ -604,7 +604,7 @@ export default {
     // 新增修改回调
     editInfoBack: function(data) {
       this.editLoading = false;
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.findPage();
         this.dialogVisible = false;
@@ -650,11 +650,11 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除

@@ -192,7 +192,7 @@
         </el-form-item>
         <el-row>
           <el-form-item label="店铺图片" prop="desc">
-            <img :src="dataForm.pic"  style="max-width:500px" /> 
+            <img :src="dataForm.pic"  style="max-width:500px" />
           </el-form-item>
 
           <el-form-item label="营业执照" prop="license_positive">
@@ -364,7 +364,7 @@ export default {
     },
     // 新增修改回调
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.findPage();
         this.dialogReviewedVisible = false;
@@ -403,12 +403,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        $.each(res.rows, (key, val) => {
+        $.each(res.data.rows, (key, val) => {
           if (val.status == 0) {
             val.status = "认证成功";
           } else if (val.status == 1) {
@@ -422,7 +422,7 @@ export default {
           }
         });
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除

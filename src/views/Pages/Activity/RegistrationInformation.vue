@@ -17,7 +17,7 @@
             <el-input v-model="filters.telephone" auto-complete="off" placeholder="电话"></el-input>
         </el-form-item>
 
-        
+
 
         <el-form-item>
           <kt-button
@@ -86,7 +86,7 @@
         :size="size"
         label-position="right"
         inline
-        
+
       >
         <el-row style="text-align:center">
           <el-form-item >
@@ -290,12 +290,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除
@@ -463,7 +463,7 @@ export default {
       else if(cellValue == 6){
          return "趋势";
       }
-      
+
     },
     showAddress5(row, column, cellValue, index) {
       if (cellValue == 1) {
@@ -514,7 +514,7 @@ export default {
     },
     handleExcelSuccess(res, file) {
       let fileUrl = URL.createObjectURL(file.raw);
-      if (res.code == "0000") {
+      if (res.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.findPage();
       } else {

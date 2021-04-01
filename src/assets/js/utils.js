@@ -27,10 +27,11 @@ export default {
       var params = {};
       params = {
         'loginChannel': 'pc',
-        'token': localStorage.getItem('token'),
-        'sign': 'qazwsxedc'
+        'token': localStorage.getItem('vtoken'),
+        'sign': 'qazwsxedc',
+        'data':data
       }
-      if (data != null && data != '') {
+     /* if (data != null && data != '') {
         for (var key in data) {
           if (data[key] == null || data[key] == undefined || (jQuery.type(data[key]) === "string" && data[key] == "")) {
 
@@ -39,7 +40,7 @@ export default {
           }
 
         }
-      }
+      }*/
       let url = "";
       let letpathNODE_ENV = process.env.NODE_ENV;
 
@@ -157,25 +158,25 @@ export default {
     },
     //登录信息
     login( data, callback) {
-      this.requestPostUrl( data, 'student-service/suser/login', callback)
+      this.requestPostUrl( data, 'student-service/SysUser/login', callback)
     },
     findDeptTree( data, callback) {
-      this.requestPostUrl(data, 'student-service/menu/findDeptTree', callback)
+      this.requestPostUrl(data, 'student-service/SysMenu/findDeptTree', callback)
     },
     findProductTypeTree(data, callback) {
-      this.requestPostUrl( data, 'student-service/menu/findProductTypeTree', callback)
+      this.requestPostUrl( data, 'student-service/SysMenu/findProductTypeTree', callback)
     },
     selectDeptTree(data, callback) {
-      this.requestPostUrl( data, 'student-service/menu/selectDeptTree', callback)
+      this.requestPostUrl( data, 'student-service/SysMenu/selectDeptTree', callback)
     },
     findNavTree( data, callback) {
-      this.requestPostUrl(data, 'student-service/menu/findNavTree', callback)
+      this.requestPostUrl(data, 'student-service/SysMenu/findNavTree', callback)
     },
     findPermissions(data, callback) {
-      this.requestPostUrl(data, 'student-service/menu/findPermissions', callback)
+      this.requestPostUrl(data, 'student-service/SysMenu/findPermissions', callback)
     },
     editUser(data, callback) {
-      this.requestPostUrl( data, 'student-service/menu/editUser', callback)
+      this.requestPostUrl( data, 'student-service/SysMenu/editUser', callback)
     },
     editInfo(data, callback) {
       this.requestPostUrl(data, 'student-service/cmn/editInfo', callback)
@@ -223,7 +224,7 @@ export default {
       this.requestPostUrl(data, 'student-service/productType/queryProductType', callback);
     },
     findMenuTree: function (data, callback) {  //角色菜单查询
-      this.requestPostUrl(data, 'student-service/menu/findMenuTree', callback);
+      this.requestPostUrl(data, 'student-service/SysMenu/findMenuTree', callback);
     },
     deleteRoleByRoleId: function (data, callback) {  //删除角色
       this.requestPostUrl(data, 'student-service/role/deleteRoleByRoleId', callback);
@@ -235,7 +236,7 @@ export default {
       this.requestPostUrl(data, 'student-service/cmn/getTxVideoSign', callback)//查询用户信息
     },
     editRole: function (data, callback) {  //修改角色
-      this.requestPostUrl(data, 'student-service/menu/editRole', callback);
+      this.requestPostUrl(data, 'student-service/SysMenu/editRole', callback);
     },
     getTxVideoTaskInfo: function (data, callback) {
       this.requestPostUrl(data, 'student-service/cmn/getTxVideoTaskInfo', callback);

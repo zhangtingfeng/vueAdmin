@@ -236,7 +236,7 @@ export default {
     },
     // 新增修改回调
     editInfoBack: function(data) {
-      if (data.code == "0000") {
+      if (data.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.dialogVisible = false;
         this.$refs["dataForm"].resetFields();
@@ -357,7 +357,7 @@ export default {
         roleMenusTotaol.roleMenus = JSON.stringify(roleMenus);
         roleMenusTotaol.roleId = roleId;
         this.utils.request.saveRoleMenus(roleMenusTotaol, function(data) {
-          if (data.code == "0000") {
+          if (data.code == 200) {
             this_.$message({ message: "操作成功", type: "success" });
             this_.authLoading = false;
             this_.findPage();

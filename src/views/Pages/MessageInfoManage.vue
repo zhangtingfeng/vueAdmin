@@ -249,12 +249,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        $.each(res.rows, (key, val) => {
+        $.each(res.data.rows, (key, val) => {
 
           if (val.type == 0) {
             val.type = "市场经营人员";
@@ -271,7 +271,7 @@ export default {
           }
         });
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除
@@ -318,7 +318,7 @@ export default {
       this.utils.request.doChecked(
         { ids: ids, checkEdStatus: customer_nature, t: "messageInfo" },
         function(res) {
-          if (res.code == "0000") {
+          if (res.code == 200) {
             this_.$message({ message: "审核完成", type: "success" });
             this_.checkpage = false;
             this_.findPage();
@@ -487,7 +487,7 @@ export default {
     },
     handleExcelSuccess(res, file) {
       let fileUrl = URL.createObjectURL(file.raw);
-      if (res.code == "0000") {
+      if (res.code == 200) {
         this.$message({ message: "操作成功", type: "success" });
         this.findPage();
       } else {

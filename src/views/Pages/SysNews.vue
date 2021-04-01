@@ -121,7 +121,7 @@
       width="45%"
       height="100%"
       label-width="80px"
-      
+
       label-position="right"
     >
       <el-form :model="dataForm" label-width="80px" ref="dataForm" label-position="right" :rules="dataFormRules">
@@ -206,8 +206,8 @@ export default {
 				whether_push: [
 					{ required: true, message: '请选择是否展示', trigger: 'blur' }
 				],
-				
-				
+
+
 			},
       newsModel: false,
       dataForm: {
@@ -232,7 +232,7 @@ export default {
       loading: false,
       customer_nature: "",
       filters: {
-        
+
 
         t: "sysNews"
       },
@@ -294,12 +294,12 @@ export default {
 
         fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
 
-        if (res.rows == null || res.rows.length == 0) {
+        if (res.data.rows == null || res.data.rows.length == 0) {
           this.$message({ message: "暂无需要导出的数据 ", type: "error" });
           return;
         }
 
-        $.each(res.rows, (key, val) => {
+        $.each(res.data.rows, (key, val) => {
           if (val.type == 0) {
             val.type = "市场经营人员";
           } else if (val.type == 1) {
@@ -315,7 +315,7 @@ export default {
           }
         });
 
-        exportExcel(res.rows, filterColumns, fileName);
+        exportExcel(res.data.rows, filterColumns, fileName);
       });
     },
     // 批量删除
@@ -349,7 +349,7 @@ export default {
           var this_ = this;
           console.log("保存信息===>>>>>>>>>" + JSON.stringify(params));
           this.utils.request.editInfo(params, function(res) {
-            if (res.code == "0000") {
+            if (res.code == 200) {
               this_.$message({ message: "操作成功", type: "success" });
               this_.newsModel = false;
               this_.$refs["dataForm"].resetFields();
@@ -399,7 +399,7 @@ export default {
       this.utils.request.doChecked(
         { ids: ids, checkEdStatus: customer_nature, t: "messageInfo" },
         function(res) {
-          if (res.code == "0000") {
+          if (res.code == 200) {
             this_.$message({ message: "审核完成", type: "success" });
             this_.checkpage = false;
             this_.findPage();
@@ -439,11 +439,11 @@ export default {
             }
           } },
 
-       
+
         { prop: "create_time", label: "创建时间", minWidth: 120 },
-       
-       
-        
+
+
+
       ];
       var temp = [];
       $.each(this.columns, function(key, val) {
