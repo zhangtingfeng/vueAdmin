@@ -18,7 +18,7 @@ fnCreate(user, openMock)
 fnCreate(role, openMock)
 fnCreate(dept, openMock)
 fnCreate(menu, openMock)
-fnCreate(dict, openMock)
+fnCreate(dict, true)
 fnCreate(log, openMock)
 
 /**
@@ -27,7 +27,7 @@ fnCreate(log, openMock)
  * @param {*} isOpen 是否开启?
  */
 function fnCreate (mod, isOpen = true) {
-  
+
   if (isOpen) {
     for (var key in mod) {
       ((res) => {

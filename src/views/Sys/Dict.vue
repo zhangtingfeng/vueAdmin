@@ -21,7 +21,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <kt-button icon="fa fa-plus" :label="$t('action.add')" type="primary" @click="handleAdd" />
+          <kt-button icon="fa fa-plus" :label="$t('action.add')" type="primary" @click="handleAdd"/>
         </el-form-item>
         <el-form-item>
           <kt-button
@@ -80,148 +80,153 @@
           type="primary"
           @click.native="submitForm"
           :loading="editLoading"
-        >{{$t('action.submit')}}</el-button>
+        >{{$t('action.submit')}}
+        </el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import CyTable from "@/views/Core/CyTable";
-import KtButton from "@/views/Core/KtButton";
-import { format } from "@/utils/datetime";
-export default {
-  components: {
-    CyTable,
-    KtButton
-  },
-  data() {
-    return {
-      size: "small",
-      filters: {
-        key: "",
-        type: "",
-        t: "sysConfig",
-        queryname: ""
-      },
-      columns: [
-        { prop: "id", label: "ID", minWidth: 50 },
-        { prop: "key", label: "名称", minWidth: 100 },
-        { prop: "val", label: "值", minWidth: 100, showOverflowTooltip: true },
-        { prop: "type", label: "类型", minWidth: 80 },
-        { prop: "remark", label: "备注", minWidth: 120 },
-        { prop: "creatorName", label: "创建人", minWidth: 100 },
-        { prop: "create_time", label: "创建时间", minWidth: 120 }
-      ],
-      pageRequest: { pageNum: 1, pageSize: 10 },
-      pageResult: {},
+    import CyTable from "@/views/Core/CyTable";
+    import KtButton from "@/views/Core/KtButton";
+    import {format} from "@/utils/datetime";
 
-      operation: false, // true:新增, false:编辑
-      editDialogVisible: false, // 新增编辑界面是否显示
-      editLoading: false,
-      dataFormRules: {
-        key: [{ required: true, message: "请输入名称", trigger: "blur" }],
-        val: [{ required: true, message: "请输入值", trigger: "blur" }],
-        type: [{ required: true, message: "请输入类型", trigger: "blur" }],
-        remark: [{ required: true, message: "请输入备注", trigger: "blur" }]
-      },
-      // 新增编辑界面数据
-      dataForm: {
-        id: "",
-        key: "",
-        val: "",
-        type: "",
-        remark: ""
-      }
-    };
-  },
-  methods: {
-    // 获取分页数据
-    findPage: function(data) {
-      this.$refs.CyTable.findPage(this.filters);
-    },
-    // 批量删除
-    handleDelete: function(data) {
-      if (data != null && data.params != null && data.params.length > 0) {
-        let ids = data.params.map(item => item.id).toString();
+    export default {
+        components: {
+            CyTable,
+            KtButton
+        },
+        data() {
+            return {
+                size: "small",
+                filters: {
+                    key: "",
+                    type: "",
+                    t: "sysConfig",
+                    queryname: ""
+                },
+                columns: [
+                    {prop: "id", label: "ID", minWidth: 50},
+                    {prop: "key", label: "名称", minWidth: 100},
+                    {prop: "val", label: "值", minWidth: 100, showOverflowTooltip: true},
+                    {prop: "type", label: "类型", minWidth: 80},
+                    {prop: "remark", label: "备注", minWidth: 120},
+                    {prop: "creatorName", label: "创建人", minWidth: 100},
+                    {prop: "create_time", label: "创建时间", minWidth: 120}
+                ],
+                pageRequest: {pageNum: 1, pageSize: 10},
+                pageResult: {},
 
-        var params = {};
-        params.t = "sysConfig";
-        params.ids = ids;
-        var this_ = this;
-        this.utils.request.batchDeleteInfo(params, function(res) {
-          if (res.code == 200) {
-            this_.$message({ message: "操作成功", type: "success" });
-            this_.findPage(null);
-          } else {
-            this_.$message({ message: "操作失败, " + res.msg, type: "error" });
-          }
-        });
-      }
-    },
-    // 显示新增界面
-    handleAdd: function() {
-      this.editDialogVisible = true;
-      this.operation = true;
-      this.dataForm = {
-        id: "",
-        key: "",
-        val: "",
-        type: "",
-        remark: ""
-      };
-    },
-    // 显示编辑界面
-    handleEdit: function(params) {
-      this.editDialogVisible = true;
-      this.operation = false;
-      this.dataForm = Object.assign({}, params.row);
-    },
-    // 编辑
-    submitForm: function() {
-      this.$refs.dataForm.validate(valid => {
-        if (valid) {
-          this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            let params = Object.assign({}, this.dataForm);
+                operation: false, // true:新增, false:编辑
+                editDialogVisible: false, // 新增编辑界面是否显示
+                editLoading: false,
+                dataFormRules: {
+                    key: [{required: true, message: "请输入名称", trigger: "blur"}],
+                    val: [{required: true, message: "请输入值", trigger: "blur"}],
+                    type: [{required: true, message: "请输入类型", trigger: "blur"}],
+                    remark: [{required: true, message: "请输入备注", trigger: "blur"}]
+                },
+                // 新增编辑界面数据
+                dataForm: {
+                    id: "",
+                    key: "",
+                    val: "",
+                    type: "",
+                    remark: ""
+                }
+            };
+        },
+        methods: {
+            // 获取分页数据
+            findPage: function (data) {
+                this.$refs.CyTable.findPage(this.filters);
+            },
+            // 批量删除
+            handleDelete: function (data) {
+                if (data != null && data.params != null && data.params.length > 0) {
+                    let ids = data.params.map(item => item.id).toString();
 
-            params.t = "sysConfig";
-            var this_ = this;
-            this.utils.request.editInfo(params, function(res) {
-              if (res.code == 200) {
-                this_.$message({ message: "操作成功", type: "success" });
+                    var params = {};
+                    params.t = "sysConfig";
+                    params.ids = ids;
+                    var this_ = this;
+                    // this.utils.request.batchDeleteInfo(params, function(res) {
+                    this.utils.request.deleteUserInfo(params, function (res) {
+                        if (res.code == 200) {
+                            this_.$message({message: "操作成功", type: "success"});
+                            this_.findPage(null);
+                        } else {
+                            this_.$message({message: "操作失败, " + res.msg, type: "error"});
+                        }
+                    });
+                }
+            },
+            // 显示新增界面
+            handleAdd: function () {
+                this.editDialogVisible = true;
+                this.operation = true;
+                this.dataForm = {
+                    id: "",
+                    key: "",
+                    val: "",
+                    type: "",
+                    remark: ""
+                };
+            },
+            // 显示编辑界面
+            handleEdit: function (params) {
+                this.editDialogVisible = true;
+                this.operation = false;
+                this.dataForm = Object.assign({}, params.row);
+            },
+            // 编辑
+            submitForm: function () {
+                this.$refs.dataForm.validate(valid => {
+                    if (valid) {
+                        this.$confirm("确认提交吗？", "提示", {}).then(() => {
+                            let params = Object.assign({}, this.dataForm);
 
-                this_.$refs["dataForm"].resetFields();
+                            params.t = "sysConfig";
+                            var this_ = this;
+                            this.utils.request.editInfo(params, function (res) {
+                                if (res.code == 200) {
+                                    this_.$message({message: "操作成功", type: "success"});
 
-                this_.editDialogVisible = false;
+                                    this_.$refs["dataForm"].resetFields();
 
-                this_.findPage(null);
+                                    this_.editDialogVisible = false;
 
-                this_.utils.request.deleteSysCache({}, res => {});
-              } else {
-                this_.$message({
-                  message: "操作失败, " + res.msg,
-                  type: "error"
+                                    this_.findPage(null);
+
+                                   /// this_.utils.request.deleteSysCache({}, res => {
+                                   // });
+                                } else {
+                                    this_.$message({
+                                        message: "操作失败, " + res.msg,
+                                        type: "error"
+                                    });
+                                }
+                            });
+                        });
+                    }
                 });
-              }
-            });
-          });
+            },
+
+            // 时间格式化
+            dateFormat: function (row, column, cellValue, index) {
+                return format(row[column.property]);
+            },
+
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+                this.$refs.CyTable.resetForm();
+                this.findPage();
+            }
+        },
+        mounted() {
         }
-      });
-    },
-
-    // 时间格式化
-    dateFormat: function(row, column, cellValue, index) {
-      return format(row[column.property]);
-    },
-
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.$refs.CyTable.resetForm();
-      this.findPage();
-    }
-  },
-  mounted() {}
-};
+    };
 </script>
 
 <style scoped>
