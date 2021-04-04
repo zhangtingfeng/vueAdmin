@@ -539,7 +539,7 @@ export default {
       let param = {};
       param.t = "userNews";
       param.ids = row;
-      this.utils.request.deleteUserInfo(param, this.deleteInfoBack);
+      this.utils.request.batchDeleteInfo(param, this.deleteInfoBack);
     },
     //删除回调
     deleteInfoBack: function() {

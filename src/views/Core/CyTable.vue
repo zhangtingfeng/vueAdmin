@@ -256,7 +256,7 @@ export default {
         }
 
         this_.content = res.data.rows;
-        this_.totalSize = Number(res.total);
+        this_.totalSize = Number(res.data.total);
 
         this_.$nextTick(() => {
           if (filters.selections) {
@@ -301,7 +301,7 @@ export default {
           res.data.rows = [];
         }
         this_.content = res.data.rows;
-        this_.totalSize = Number(res.total?res.total:0);
+        this_.totalSize = Number(res.data.total?res.data.total:0);
       });
     },
 

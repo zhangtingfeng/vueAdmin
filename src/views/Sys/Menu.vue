@@ -299,7 +299,7 @@ export default {
         params.ids = ids;
         params.t = "sysMenu";
         var this_ = this;
-        this.utils.request.deleteUserInfo(params, function(data) {
+        this.utils.request.batchDeleteInfo(params, function(data) {
           if (data.code) {
             this_.$message({ message: "操作成功", type: "success" });
             this_.findTreeData();

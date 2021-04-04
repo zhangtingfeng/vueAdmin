@@ -264,7 +264,7 @@ export default {
 
       data.t = "messageInfoLog";
       data.ids = ids;
-      this.utils.request.deleteUserInfo(data, this.deleteInfoBack);
+      this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
     },
     deleteInfoBack: function() {
       this.findPage();

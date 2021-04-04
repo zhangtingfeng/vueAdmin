@@ -283,7 +283,7 @@ export default {
 
       data.t = "messageInfo";
       data.ids = ids;
-      this.utils.request.deleteUserInfo(data, this.deleteInfoBack);
+      this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
     },
     handleEdit: function(data) {
       this.dialogImageUrl = data.row.code;

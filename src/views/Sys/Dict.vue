@@ -73,6 +73,7 @@
           <el-input v-model="dataForm.remark" auto-complete="off" type="textarea"></el-input>
         </el-form-item>
       </el-form>
+
       <div slot="footer" class="dialog-footer" style="text-align:center">
         <el-button :size="size" @click.native="editDialogVisible = false">{{$t('action.cancel')}}</el-button>
         <el-button
@@ -152,7 +153,7 @@
                     params.ids = ids;
                     var this_ = this;
                     // this.utils.request.batchDeleteInfo(params, function(res) {
-                    this.utils.request.deleteUserInfo(params, function (res) {
+                    this.utils.request.batchDeleteInfo(params, function (res) {
                         if (res.code == 200) {
                             this_.$message({message: "操作成功", type: "success"});
                             this_.findPage(null);

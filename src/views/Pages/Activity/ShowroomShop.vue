@@ -143,7 +143,7 @@ export default {
       }
       params.t = "showroomShop";
       params.ids = ids;
-      this_.utils.request.deleteUserInfo(params, this_.deleteInfoBack);
+      this_.utils.request.batchDeleteInfo(params, this_.deleteInfoBack);
     },
     deleteInfoBack: function() {
       this.findPage();

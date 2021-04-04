@@ -46,9 +46,9 @@ export default {
 
       this.utils.request.queryUserPage(filters, res => {
         if ((res.code = "0000")) {
-          this.total = res.total;
+          this.total = res.data.total;
           this.tableData = res.data.rows;
-          this.$emit("changeWarnSize", res.total);
+          this.$emit("changeWarnSize", res.data.total);
         }
       });
     }

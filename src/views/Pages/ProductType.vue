@@ -359,7 +359,7 @@ export default {
           }
           data.t = "productType";
           data.ids = ids;
-          this_.utils.request.deleteUserInfo(data, this_.deleteInfoBack);
+          this_.utils.request.batchDeleteInfo(data, this_.deleteInfoBack);
         }else{
           this_.$message({ message: "当前分类存在子分类，不可删除",type: "error" });
         }

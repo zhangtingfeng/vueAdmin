@@ -29,18 +29,18 @@ export default {
         'loginChannel': 'pc',
         'token': localStorage.getItem('vtoken'),
         'sign': 'qazwsxedc',
-        'data':data
+        'data': data
       }
-     /* if (data != null && data != '') {
-        for (var key in data) {
-          if (data[key] == null || data[key] == undefined || (jQuery.type(data[key]) === "string" && data[key] == "")) {
+      /* if (data != null && data != '') {
+         for (var key in data) {
+           if (data[key] == null || data[key] == undefined || (jQuery.type(data[key]) === "string" && data[key] == "")) {
 
-          } else {
-            params[key] = data[key];
-          }
+           } else {
+             params[key] = data[key];
+           }
 
-        }
-      }*/
+         }
+       }*/
       let url = "";
       let letpathNODE_ENV = process.env.NODE_ENV;
 
@@ -50,7 +50,7 @@ export default {
         url = this.gethostPath();
       } else if (letpathNODE_ENV === 'production') {
         url = this.gethostPath();
-        params["headRouter"] =   argurl;
+        params["headRouter"] = argurl;
       }
 
 
@@ -58,63 +58,9 @@ export default {
       axios.post(url, (params),
         {
           headers: {
-            'headRouter':  argurl
+            'headRouter': argurl
           }
         }
-        ).then(rsp => {
-
-
-        if (rsp.data.code == "4000") {
-          Message.error({//弹窗使用方法
-            showClose: true,
-            duration: 2000,  //警告的消息3秒钟后消失
-            message: "登录失效，请重新登录",
-          });
-
-
-          setTimeout(function () {
-            localStorage.removeItem('token');
-            router.push("/login");
-          }, 3000);
-
-        } else {
-          callback(rsp.data);
-        }
-
-
-      }).catch(error => {
-        var data = {};
-        data.code = '9999';
-        data.msg = error.message;
-        callback(data);
-      });
-    },
-    requestGetUrl( argurl, callback) {
-      var paramsdata = {};
-      paramsdata = {
-        'loginChannel': 'pc',
-        'token': localStorage.getItem('vtoken'),
-        'sign': 'qazwsxedc'
-      }
-
-      let url = "";
-      let letpathNODE_ENV = process.env.NODE_ENV;
-
-      if (letpathNODE_ENV === 'development') {
-        url = this.gethostPath() + argurl;
-      } else if (letpathNODE_ENV === 'developmentEreka') {
-        url = this.gethostPath();
-      } else if (letpathNODE_ENV === 'production') {
-        url = this.gethostPath();
-        params["headRouter"] =   argurl;
-      }
-
-
-      debugger;
-      axios.get(url, {params:paramsdata,
-          headers:{
-            'headRouter':  argurl
-          }}
       ).then(rsp => {
 
 
@@ -143,77 +89,136 @@ export default {
         callback(data);
       });
     },
-    getRequest( url, callback) {
+    requestGetUrl(argurl, callback) {
+      var paramsdata = {};
+      paramsdata = {
+        'loginChannel': 'pc',
+        'token': localStorage.getItem('vtoken'),
+        'sign': 'qazwsxedc'
+      }
+
+      let url = "";
+      let letpathNODE_ENV = process.env.NODE_ENV;
+
+      if (letpathNODE_ENV === 'development') {
+        url = this.gethostPath() + argurl;
+      } else if (letpathNODE_ENV === 'developmentEreka') {
+        url = this.gethostPath();
+      } else if (letpathNODE_ENV === 'production') {
+        url = this.gethostPath();
+        paramsdata["headRouter"] = argurl;
+      }
+
+
       //debugger;
-      this.requestGetUrl( url, callback);
+      axios.get(url, {
+          params: paramsdata,
+          headers: {
+            'headRouter': argurl
+          }
+        }
+      ).then(rsp => {
+
+
+        if (rsp.data.code == "4000") {
+          Message.error({//弹窗使用方法
+            showClose: true,
+            duration: 2000,  //警告的消息3秒钟后消失
+            message: "登录失效，请重新登录",
+          });
+
+
+          setTimeout(function () {
+            localStorage.removeItem('token');
+            router.push("/login");
+          }, 3000);
+
+        } else {
+          callback(rsp.data);
+        }
+
+
+      }).catch(error => {
+        var data = {};
+        data.code = '9999';
+        data.msg = error.message;
+        callback(data);
+      });
     },
-    getVtoken( data, callback) {
+    getRequest(url, callback) {
       //debugger;
-      this.requestPostUrl( data, 'student-service/SysUser/getVtoken', callback);
+      this.requestGetUrl(url, callback);
+    },
+    getVtoken(data, callback) {
+      //debugger;
+      this.requestPostUrl(data, 'student-service/SysUser/getVtoken', callback);
     },
     setShwoRoomShop(data, callback) {
-      this.requestPostUrl( data, 'shop/setShwoRoomShop', callback);
+      this.requestPostUrl(data, 'shop/setShwoRoomShop', callback);
     },
     //登录信息
-    login( data, callback) {
-      this.requestPostUrl( data, 'student-service/SysUser/login', callback)
+    login(data, callback) {
+      this.requestPostUrl(data, 'student-service/SysUser/login', callback)
     },
-    findDeptTree( data, callback) {
+    findDeptTree(data, callback) {
       this.requestPostUrl(data, 'student-service/SysMenu/findDeptTree', callback)
     },
     findProductTypeTree(data, callback) {
-      this.requestPostUrl( data, 'student-service/SysMenu/findProductTypeTree', callback)
+      this.requestPostUrl(data, 'student-service/SysMenu/findProductTypeTree', callback)
     },
     selectDeptTree(data, callback) {
-      this.requestPostUrl( data, 'student-service/SysMenu/selectDeptTree', callback)
+      this.requestPostUrl(data, 'student-service/SysMenu/selectDeptTree', callback)
     },
-    findNavTree( data, callback) {
+    findNavTree(data, callback) {
       this.requestPostUrl(data, 'student-service/SysMenu/findNavTree', callback)
     },
     findPermissions(data, callback) {
       this.requestPostUrl(data, 'student-service/SysMenu/findPermissions', callback)
     },
     editUser(data, callback) {
-      this.requestPostUrl( data, 'student-service/SysMenu/editUser', callback)
+      this.requestPostUrl(data, 'student-service/SysMenu/editUser', callback)
     },
     editInfo(data, callback) {
       this.requestPostUrl(data, 'student-service/cmn/editInfo', callback)
     },
-    editParmas( data, callback) {
-      this.requestPostUrl( data, 'student-service/cmn/editParmas', callback)
+    editParmas(data, callback) {
+      this.requestPostUrl(data, 'student-service/cmn/editParmas', callback)
     },
-    queryUserList: function ( data, callback) { // 通用 查询列表
-      this.requestPostUrl( data, 'student-service/cmn/queryList', callback);
+    queryUserList: function (data, callback, defaultservice = 'student-service') { // 通用 查询列表
+      this.requestPostUrl(data, defaultservice + '/cmn/queryList', callback);
     },
-    checkShop: function ( data, callback) { // 通用 查询列表
-      this.requestPostUrl( data, 'student-service/cmn/checkShop', callback);
+    querypageList: function (data, callback, defaultservice = 'student-service') { // 通用 查询列表
+      this.requestPostUrl(data, defaultservice + '/cmn/queryList', callback);
+    },
+    queryDicList: function (dictype, callback) { // 通用 查询列表
+      this.getRequest('student-service/getDic/dictype/' + dictype, callback);
+    },
+    checkShop: function (data, callback) { // 通用 查询列表
+      this.requestPostUrl(data, 'student-service/cmn/checkShop', callback);
     },
     checkShopDoorPlate: function (data, callback) { // 通用 查询列表
       this.requestPostUrl(data, 'student-service/cmn/checkShopDoorPlate', callback);
     },
-    queryUserPage: function ( data, callback) { // 通用 查询列表
-      this.requestPostUrl( data, 'student-service/cmn/queryPage', callback);
+    queryUserPage: function (data, callback) { // 通用 查询列表
+      this.requestPostUrl(data, 'student-service/cmn/queryPage', callback);
     },
-    queryForPage: function ( data, callback) { // 通用 查询列表
+    queryForPage: function (data, callback) { // 通用 查询列表
       this.requestPostUrl(data, 'student-service/cmn/queryForPage', callback);
     },
-    queryUserInfo: function ( data, callback) { // 通用 获取单个对象信息
-      this.requestPostUrl( data, 'student-service/cmn/queryInfoRole', callback);
+    queryUserInfo: function (data, callback) { // 通用 获取单个对象信息
+      this.requestPostUrl(data, 'student-service/cmn/queryInfoRole', callback);
     },
     queryUserInfos: function (data, callback) { // 通用 获取单个对象信息
       this.requestPostUrl(data, 'student-service/cmn/queryInfoRole', callback);
     },
 
-    deleteUserInfo: function (data, callback) { // 通用 删除信息
-      this.requestPostUrl(data, 'student-service/cmn/deleteInfo', callback);
-    },
 
     deleteSysCache: function (data, callback) { // 通用 清除参数配置缓存
       this.requestPostUrl(data, 'student-service/cmn/deleteSysCache', callback);
     },
 
     batchDeleteInfo: function (data, callback) { // 通用 批量删除信息
-      this.requestPostUrl(data, 'student-service/cmn/batchDeleteInfo', callback);
+      this.requestPostUrl(data, 'student-service/cmn/deleteInfo', callback);
     },
     doChecked: function (data, callback) { // 通用 批量删除信息
       this.requestPostUrl(data, 'student-service/checked/doChecked', callback);

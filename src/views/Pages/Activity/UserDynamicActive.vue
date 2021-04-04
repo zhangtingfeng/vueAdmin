@@ -466,7 +466,7 @@
 
                 data.t = "UserDynamicActive_isVerify";
                 data.ids = ids;
-                this.utils.request.deleteUserInfo(data, this.deleteInfoBack);
+                this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
             },
             deleteInfoBack: function (res) {
                 if (res.code == 200) {
