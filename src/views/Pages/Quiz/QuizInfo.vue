@@ -31,26 +31,23 @@
     <!--工具栏-->
     <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
       <el-form :inline="true" :model="filters" :size="size" ref="filters" class="form">
-        <el-form-item prop="name">
-          <el-input v-model="filters.name" auto-complete="off" placeholder="商品名称"></el-input>
+        <el-form-item prop="Title">
+          <el-input auto-complete="off" placeholder="方案名称" v-model="filters.Title"></el-input>
         </el-form-item>
-        <el-form-item prop="name">
-          <!--<el-input v-model="filters.shop_id" auto-complete="off" placeholder="所属店铺"></el-input>-->
-          <el-select v-model="filters.shop_id" placeholder="所属店铺" v-show="!login_shop_id">
+
+        <el-form-item prop="status">
+          <el-select clearable filterable placeholder="请选择在线状态" v-model="filters.status">
             <el-option
-              v-for="item in shopOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
+              :key="item.val"
+              :label="item.dicName"
+              :value="item.val"
+              v-for="item in popupQuizData"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item prop="status">
-          <el-select v-model="filters.status" placeholder="审核状态">
-            <el-option label="审核中" :value="0"></el-option>
-            <el-option label="审核成功" :value="1"></el-option>
-            <el-option label="审核失败" :value="2"></el-option>
-          </el-select>
+          <!--  <el-select v-model="filters.status" placeholder="在线状态">
+              <el-option label="上线状态" :value="1"></el-option>
+              <el-option label="离线状态" :value="2"></el-option>
+            </el-select>-->
         </el-form-item>
         <el-form-item>
           <kt-button icon="el-icon-s-check" label="新增" type="primary" @click="addQuiz"/>
@@ -143,38 +140,35 @@
           <el-select v-model="dataForm.Type_TestOrLearing" placeholder="请选择分类" clearable filterable>
             <el-option
               v-for="item in popupQuestionTypeData"
-              :key="item.id"
+              :key="item.val"
               :label="item.dicName"
-              :value="item.id"
+              :value="item.val"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="报告费用" prop="ReportNeedMoney">
+          <el-input auto-complete="off" type="number" v-model="dataForm.ReportNeedMoney"></el-input>
+        </el-form-item>
+        <el-form-item label="开始费用" prop="TestNeedMoney">
+          <el-input auto-complete="off" type="number" v-model="dataForm.TestNeedMoney"></el-input>
+        </el-form-item>
+
+
+        <el-form-item label="在线状态" prop="quizStatus">
+          <el-select clearable filterable placeholder="请选择在线状态" v-model="dataForm.quizStatus">
+            <el-option
+              :key="item.val"
+              :label="item.dicName"
+              :value="item.val"
+              v-for="item in popupQuizData"
             ></el-option>
           </el-select>
         </el-form-item>
 
 
-
-        <el-form-item label="最小价格" prop="min_price">
-          <el-input v-model="dataForm.min_price" type="number" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="最大价格" prop="max_price">
-          <el-input v-model="dataForm.max_price" type="number" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="抛光性" prop="polishability">
-          <el-input v-model="dataForm.polishability" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密度" prop="density">
-          <el-input v-model="dataForm.density" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="宽度" prop="width">
-          <el-input v-model="dataForm.width" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="材质" prop="texture">
-          <el-input v-model="dataForm.texture" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="克数" prop="gram_numbe">
-          <el-input v-model="dataForm.gram_numbe" auto-complete="off"></el-input>
-        </el-form-item>
         <el-row>
-          <el-form-item label="商品主图">
+          <el-form-item label="方案主图">
             <img-upload
               ref="ImgUpload"
               :filelist="picList"
@@ -184,21 +178,12 @@
               uploadButton="picList"
             ></img-upload>
           </el-form-item>
-          <el-form-item label="商品图片">
-            <img-upload
-              ref="ImgUpload"
-              :filelist="imgsList"
-              @handleImgUploadRemove="handleImgImgUploadRemove"
-              @handleImgUploadChange="handleImgImgUploadChange"
-              @handlePictureCardPreview="handlePictureCardPreview"
-              uploadButton="imgsList"
-            ></img-upload>
-          </el-form-item>
+
         </el-row>
-        <el-form-item label="图文详情" prop="content">
-          <div class="edit_container" style="max-height:500px;overflow: auto;">
+        <el-form-item label="图文详情" prop="InvestMemo">
+          <div class="edit_container" style="max-height:500px;min-height:20px;overflow: auto;">
             <quill-editor
-              v-model="dataForm.content"
+              v-model="dataForm.InvestMemo"
               ref="myQuillEditor"
               :options="editorOption"
               @blur="onEditorBlur($event)"
@@ -318,7 +303,7 @@
                     shop_id: "",
                     t: "quiz",
                     create_time: "desc",
-                    tsevice:"teacher-service"
+                    tsevice: "teacher-service"
                 },
                 dataForm: {
                     ID: "",
@@ -333,8 +318,9 @@
                 },
                 dataFormRules: {
 
-                    Title: [{required: true, message: "请输入商品名称", trigger: "blur"}],
+                    Title: [{required: true, message: "请输入方案名称", trigger: "blur"}],
                     InvestMemo: [{required: true, message: "请输入方案介绍，让用户知道这是什么测试", trigger: "blur"}],
+
                     quizStatus: [
                         {required: true, message: "请选择方案状态,处于停用状态还是使用状态", trigger: "change"}
                     ],
@@ -353,6 +339,7 @@
                 dialogVisibleImageList: false,
                 filelist: [],
                 popupQuestionTypeData: [],
+                popupQuizData: [],
                 popupTreeProps: {
                     label: "name",
                     children: "children"
@@ -600,7 +587,7 @@
                         return;
                     }
                     exportExcel(res.data.rows, filterColumns, fileName);
-                },filters.tService);
+                }, filters.tService);
             },
             // 批量删除
             handleDelete: function (data) {
@@ -720,7 +707,7 @@
                 var that = this;
                 this.utils.request.querypageList({t: "quiz"}, function (data) {
                     that.shopOptions = data.data;
-                },"teacher-service");
+                }, "teacher-service");
             },
 
             handlePreview(file) {
@@ -740,17 +727,29 @@
             beforeClose() {
                 this.filelist = [];
             },
-            findquestiontype() {
+            findDicType() {
                 var this_ = this;
 
-                this.utils.request.queryDicList('questiontype', function (res) {
-                    if (res.code=200){
+                this.utils.request.queryDicList('trainOrtest', function (res) {
+                    if (res.code = 200) {
                         this_.popupQuestionTypeData = res.data;
                     }
                     //debugger;
-                   //
+                    //
                 });
+
+                this.utils.request.queryDicList('quizStatusType', function (res) {
+                    if (res.code = 200) {
+                        this_.popupQuizData = res.data;
+                    }
+                    //debugger;
+                    //
+                });
+
+
             },
+
+
             review(data) {
                 if (this.checked.length < 1) {
                     this.$message({message: "审核数据不能为空", type: "error"});
@@ -762,7 +761,7 @@
         mounted() {
             this.initColumns();
             this.querypageList();
-            this.findquestiontype();
+            this.findDicType();
 
             $(document).on(
                 "click",

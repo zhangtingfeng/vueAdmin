@@ -108,7 +108,7 @@
                     queryname: ""
                 },
                 columns: [
-                   
+
                     {prop: "dicName", label: "名称", minWidth: 100},
                     {prop: "val", label: "值", minWidth: 100, showOverflowTooltip: true},
                     {prop: "type", label: "类型", minWidth: 80},
