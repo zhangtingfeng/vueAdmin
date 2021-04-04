@@ -526,12 +526,12 @@ export default {
       this.$refs.tableData2.clearSelection();
       this.$refs.tableData3.clearSelection();
       this_.filters.type = "";
-      this.utils.request.queryUserPage(this_.filters, function(res) {
+      this.utils.request.queryCmnQueryPage(this_.filters, function(res) {
         if (res.data.rows == null) {
           res.data.rows = [];
         }
         this_.tableData = res.data.rows;
-      });
+      },this_.filters.tService);
     },
 
     //删除按钮
@@ -551,16 +551,16 @@ export default {
       if (tab.name == "3") {
         let this_ = this;
         this_.filters.type = 0;
-        this.utils.request.queryUserPage(this_.filters, function(res) {
+        this.utils.request.queryCmnQueryPage(this_.filters, function(res) {
           if (res.data.rows == null) {
             res.data.rows = [];
           }
           this_.headTable = res.data.rows;
-        });
+        },this_.filters.tService);
       } else if (tab.name == "1") {
         let this_ = this;
         this_.filters.type = 1;
-        this.utils.request.queryUserPage(this_.filters, function(res) {
+        this.utils.request.queryCmnQueryPage(this_.filters, function(res) {
           if (res.data.rows == null) {
             res.data.rows = [];
           }
@@ -569,7 +569,7 @@ export default {
       } else if (tab.name == "2") {
         let this_ = this;
         this_.filters.type = 2;
-        this.utils.request.queryUserPage(this_.filters, function(res) {
+        this.utils.request.queryCmnQueryPage(this_.filters, function(res) {
           if (res.data.rows == null) {
             res.data.rows = [];
           }
@@ -578,7 +578,7 @@ export default {
       } else if (tab.name == "4") {
         let this_ = this;
         this_.filters.type = "";
-        this.utils.request.queryUserPage(this_.filters, function(res) {
+        this.utils.request.queryCmnQueryPage(this_.filters, function(res) {
           if (res.data.rows == null) {
             res.data.rows = [];
           }

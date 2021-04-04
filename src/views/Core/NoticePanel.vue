@@ -42,7 +42,7 @@ export default {
       filters.max_is_expired_days = -1;
       filters.sendemail = 1;
 
-      this.utils.request.queryUserPage(filters, res => {
+      this.utils.request.queryCmnQueryPage(filters, res => {
         if ((res.code = "0000")) {
           this.total = res.data.total;
           this.tableData = res.data.rows;

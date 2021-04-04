@@ -53,7 +53,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <kt-button icon="el-icon-s-check" label="新增" type="primary" @click="addProduct"/>
+          <kt-button icon="el-icon-s-check" label="新增" type="primary" @click="addQuiz"/>
           <kt-button
             icon="fa fa-search"
             label="查询"
@@ -69,7 +69,7 @@
             @click="resetForm('filters')"
           />
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <kt-button
             icon="el-icon-refresh"
             label="审核"
@@ -78,7 +78,7 @@
             perms="pages:activity:checked"
           />
         </el-form-item>
-        <!--<el-form-item>-->
+       <el-form-item>-->
         <!--<kt-button label="新增" type="primary" @click="handleAdd" />-->
         <!--</el-form-item>-->
       </el-form>
@@ -121,7 +121,7 @@
       ref="CyTable"
     ></cy-table>
     <!--新增编辑界面-->
-    <el-dialog title="商品详情" width="70%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+    <el-dialog title="方案详情" width="70%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form
         :model="dataForm"
         label-width="80px"
@@ -135,50 +135,22 @@
           <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="商品名称" prop="name">
-          <el-input v-model="dataForm.name" auto-complete="off"></el-input>
+        <el-form-item label="名称" prop="Title">
+          <el-input v-model="dataForm.Title" auto-complete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="所属店铺" prop="shop_id" v-show="!login_shop_id">
-          <el-select v-model="dataForm.shop_id" placeholder="请选择店铺" clearable filterable>
+        <el-form-item label="所属分类" prop="Type_TestOrLearing">
+          <el-select v-model="dataForm.Type_TestOrLearing" placeholder="请选择分类" clearable filterable>
             <el-option
-              v-for="item in shopOptions"
+              v-for="item in popupQuestionTypeData"
               :key="item.id"
-              :label="item.name"
+              :label="item.dicName"
               :value="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
 
-        <!-- <el-form-item label="审核状态" prop="status" v-show="dataForm.id">
-          <el-select v-model="dataForm.status" placeholder="审核状态" clearable filterable>
-            <el-option
-              v-for="item in statusOptions"
-              :key="item.key"
-              :label="item.value"
-              :value="item.key"
-            ></el-option>
-          </el-select>
-        </el-form-item>-->
 
-        <el-form-item label="所属分类" prop="type">
-          <!-- <el-select v-model="dataForm.type" placeholder="请选择分类" clearable filterable>
-            <el-option
-              v-for="item in popupTreeData"
-              :key="item.id"
-              :label="item.name"
-              :value="item.name"
-            ></el-option>
-          </el-select>-->
-          <popup-tree-input
-            :data="popupTreeData"
-            :props="popupTreeProps"
-            :prop="dataForm.parentName==null?'':dataForm.parentName"
-            :nodeKey="''+dataForm.pid"
-            :currentChangeHandle="handleTreeSelectChange"
-            filter_key="name"
-          ></popup-tree-input>
-        </el-form-item>
 
         <el-form-item label="最小价格" prop="min_price">
           <el-input v-model="dataForm.min_price" type="number" auto-complete="off"></el-input>
@@ -344,8 +316,9 @@
                     status: "",
                     name: "",
                     shop_id: "",
-                    t: "product",
-                    create_time: "desc"
+                    t: "quiz",
+                    create_time: "desc",
+                    tsevice:"teacher-service"
                 },
                 dataForm: {
                     ID: "",
@@ -379,7 +352,7 @@
                 deptData: [],
                 dialogVisibleImageList: false,
                 filelist: [],
-                popupTreeData: [],
+                popupQuestionTypeData: [],
                 popupTreeProps: {
                     label: "name",
                     children: "children"
@@ -426,7 +399,7 @@
             }
         },
         methods: {
-            
+
             handleSuccess(res) {
                 // 获取富文本组件实例
                 let quill = this.$refs.myQuillEditor.quill;
@@ -491,7 +464,7 @@
                 this.picList = [];
                 this.imgsList = [];
             },
-            addProduct: function (params) {
+            addQuiz: function (params) {
                 let this_ = this;
                 this.dialogVisible = true;
                 this.operation = false;
@@ -547,7 +520,7 @@
                 this_.$refs.dataForm.validate(valid => {
                     if (valid) {
                         let params = Object.assign({}, this_.dataForm);
-                        params.t = "product";
+                        params.t = "quzi";
 
                         params.imgs = this.imgsList.map(item => item.url).toString();
                         params.pic = this.picList.map(item => item.url).toString();
@@ -615,7 +588,7 @@
                 }
                 filters.start = null;
                 filters.limit = null;
-                this.utils.request.queryUserPage(filters, res => {
+                this.utils.request.queryCmnQueryPage(filters, res => {
                     if (fileName == undefined || fileName == null) {
                         fileName = "excel-list";
                     }
@@ -627,7 +600,7 @@
                         return;
                     }
                     exportExcel(res.data.rows, filterColumns, fileName);
-                });
+                },filters.tService);
             },
             // 批量删除
             handleDelete: function (data) {
@@ -636,7 +609,7 @@
                     ids = ids + data.params[i].id + ",";
                 }
 
-                data.t = "product";
+                data.t = "quiz";
                 data.ids = ids;
                 this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
             },
@@ -680,23 +653,23 @@
             // 处理表格列过滤显示
             initColumns: function () {
                 this.columns = [
-                    {prop: "name", label: "商品名称", minWidth: 120},
-                    {prop: "shopname", label: "所属店铺", minWidth: 120},
+                    {prop: "Title", label: "方案名称", minWidth: 120},
+                    {prop: "InvestMemo", label: "方案介绍", minWidth: 120},
                     {
-                        prop: "pic",
-                        label: "商品主图",
+                        prop: "Picture",
+                        label: "主图",
                         minWidth: 120,
                         formatter: this.showPhto
                     },
-                    {prop: "type", label: "所属分类", minWidth: 120},
+                    {prop: "ReportNeedMoney", label: "显示报告费用", minWidth: 120},
                     {
-                        prop: "content",
-                        label: "商品详情",
+                        prop: "TestNeedMoney",
+                        label: "开始测试费用",
                         minWidth: 120,
                         showOverflowTooltip: false
                     },
                     {
-                        prop: "status",
+                        prop: "quizStatus",
                         label: "状态",
                         minWidth: 120,
                         formatter: this.showStatus
@@ -729,7 +702,7 @@
                     status: "",
                     name: "",
                     shop_id: "",
-                    t: "product"
+                    t: "quiz"
                 }),
                     this.$refs.CyTable.resetForm();
                 this.findPage();
@@ -748,16 +721,6 @@
                 this.utils.request.querypageList({t: "quiz"}, function (data) {
                     that.shopOptions = data.data;
                 },"teacher-service");
-            },
-            //初始化分类
-            queryProductType() {
-                var that = this;
-                let params = {};
-                params.t = "productType";
-                params.sql = "queryProductType";
-                this.utils.request.queryProductType(params, function (data) {
-                    that.typeOptions = data.data;
-                });
             },
 
             handlePreview(file) {
@@ -782,10 +745,10 @@
 
                 this.utils.request.queryDicList('questiontype', function (res) {
                     if (res.code=200){
-
+                        this_.popupQuestionTypeData = res.data;
                     }
-                    debugger;
-                   // this_.popupTreeData = res.data;
+                    //debugger;
+                   //
                 });
             },
             review(data) {

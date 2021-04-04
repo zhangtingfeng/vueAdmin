@@ -44,13 +44,13 @@ export default {
       filters.min_is_expired_days = 0;
       filters.sendemail = 1;
 
-      this.utils.request.queryUserPage(filters, res => {
+      this.utils.request.queryCmnQueryPage(filters, res => {
         if ((res.code = "0000")) {
           this.total = res.data.total;
           this.tableData = res.data.rows;
           this.$emit("changeWarnSize", res.data.total);
         }
-      });
+      },filters.tService);
     }
   },
   mounted() {

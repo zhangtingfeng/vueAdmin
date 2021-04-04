@@ -187,43 +187,43 @@
                 _this.incomefilters.start = 0;
                 _this.incomefilters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.incomefilters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.incomefilters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.incomeRow = res.data.rows[0];
                     }
-                });
+                },this_.incomefilters.tService);
             },
             findOrderPageincoefilters: function () {
                 let _this = this;
                 _this.incoeNumfilters.start = 0;
                 _this.incoeNumfilters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.incoeNumfilters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.incoeNumfilters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.incomeOrderNumRow = res.data.rows[0];
                     }
-                });
+                },this_.incoeNumfilters.tService);
             },
             findUserNumPageincoefilters: function () {
                 let _this = this;
                 _this.incoeUserNumfilters.start = 0;
                 _this.incoeUserNumfilters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.incoeUserNumfilters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.incoeUserNumfilters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.incomeUserNumRow = res.data.rows[0];
                     }
-                });
+                },this_.incoeUserNumfilters.tService);
             },
             findUserPageincoefilters: function () {
                 let _this = this;
                 _this.incoeUserfilters.start = 0;
                 _this.incoeUserfilters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.incoeUserfilters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.incoeUserfilters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.incomeUserRow = res.data.rows[0];
@@ -235,7 +235,7 @@
                 _this.incoeUserShareNumfilters.start = 0;
                 _this.incoeUserShareNumfilters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.incoeUserShareNumfilters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.incoeUserShareNumfilters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.incomeUserShareNumRow = res.data.rows[0];
@@ -247,7 +247,7 @@
                 _this.StatisticsIncome1filters.start = 0;
                 _this.StatisticsIncome1filters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.StatisticsIncome1filters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.StatisticsIncome1filters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.StatisticsIncome1Row = res.data.rows[0];
@@ -259,7 +259,7 @@
                 _this.Statisticsincome_type10filters.start = 0;
                 _this.Statisticsincome_type10filters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.Statisticsincome_type10filters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.Statisticsincome_type10filters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.income_type10Row = res.data.rows[0];
@@ -271,7 +271,7 @@
                 _this.user_account_extractfilters.start = 0;
                 _this.user_account_extractfilters.limit = 100;
 
-                this.utils.request.queryUserPage(_this.user_account_extractfilters, function (res) {
+                this.utils.request.queryCmnQueryPage(_this.user_account_extractfilters, function (res) {
                     //debugger;
                     if (res.code==200 && res.data.rows != null) {
                         _this.user_account_extractRow = res.data.rows[0];

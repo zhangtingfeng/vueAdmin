@@ -184,11 +184,11 @@ export default {
     editParmas(data, callback) {
       this.requestPostUrl(data, 'student-service/cmn/editParmas', callback)
     },
-    queryUserList: function (data, callback, defaultservice = 'student-service') { // 通用 查询列表
-      this.requestPostUrl(data, defaultservice + '/cmn/queryList', callback);
+    queryUserList: function (data, callback, defaultService = 'student-service') { // 通用 查询列表
+      this.requestPostUrl(data, defaultService + '/cmn/queryList', callback);
     },
-    querypageList: function (data, callback, defaultservice = 'student-service') { // 通用 查询列表
-      this.requestPostUrl(data, defaultservice + '/cmn/queryList', callback);
+    querypageList: function (data, callback, defaultService = 'student-service') { // 通用 查询列表
+      this.requestPostUrl(data, defaultService + '/cmn/queryList', callback);
     },
     queryDicList: function (dictype, callback) { // 通用 查询列表
       this.getRequest('student-service/getDic/dictype/' + dictype, callback);
@@ -199,8 +199,8 @@ export default {
     checkShopDoorPlate: function (data, callback) { // 通用 查询列表
       this.requestPostUrl(data, 'student-service/cmn/checkShopDoorPlate', callback);
     },
-    queryUserPage: function (data, callback) { // 通用 查询列表
-      this.requestPostUrl(data, 'student-service/cmn/queryPage', callback);
+    queryCmnQueryPage: function (data, callback,tService="student-service") { // 通用 查询列表
+      this.requestPostUrl(data, tService+'/cmn/queryPage', callback);
     },
     queryForPage: function (data, callback) { // 通用 查询列表
       this.requestPostUrl(data, 'student-service/cmn/queryForPage', callback);
@@ -292,11 +292,11 @@ export default {
     return this.request.gethostPath();
   },
   getUpLoadHost() {
-    return this.gethostPath() + "cmn/imgUpload";
+    return this.request.gethostPath() + "cmn/imgUpload";
   },
 
   getVideoUpLoadHost() {
-    return this.gethostPath() + "cmn/videoUpload";
+    return this.request.gethostPath() + "cmn/videoUpload";
   },
 
   isNull(data) {

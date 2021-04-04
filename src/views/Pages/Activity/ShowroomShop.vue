@@ -118,7 +118,7 @@ export default {
       }
       filters.start = null;
       filters.limit = null;
-      this.utils.request.queryUserPage(filters, res => {
+      this.utils.request.queryCmnQueryPage(filters, res => {
         if (fileName == undefined || fileName == null) {
           fileName = "excel-list";
         }
@@ -131,7 +131,7 @@ export default {
         }
 
         exportExcel(res.data.rows, filterColumns, fileName);
-      });
+      },filters.tService);
     },
     // 批量删除
     handleDelete: function(data) {

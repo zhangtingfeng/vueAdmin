@@ -3,8 +3,8 @@
     <!--工具栏-->
     <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
       <el-form :inline="true" :model="filters" :size="size" ref="filters">
-        <el-form-item prop="key">
-          <el-input v-model="filters.key" placeholder="名称"></el-input>
+        <el-form-item prop="dicName">
+          <el-input v-model="filters.dicName" placeholder="名称"></el-input>
         </el-form-item>
         <el-form-item prop="type">
           <el-input v-model="filters.type" placeholder="类型"></el-input>
@@ -60,8 +60,8 @@
         <el-form-item label="ID" prop="id" v-if="false">
           <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="名称" prop="key">
-          <el-input v-model="dataForm.key" auto-complete="off"></el-input>
+        <el-form-item label="名称" prop="dicName">
+          <el-input v-model="dataForm.dicName" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="值" prop="val">
           <el-input v-model="dataForm.val" auto-complete="off"></el-input>
@@ -102,14 +102,14 @@
             return {
                 size: "small",
                 filters: {
-                    key: "",
+                    dicName: "",
                     type: "",
                     t: "sysConfig",
                     queryname: ""
                 },
                 columns: [
-                    {prop: "id", label: "ID", minWidth: 50},
-                    {prop: "key", label: "名称", minWidth: 100},
+                   
+                    {prop: "dicName", label: "名称", minWidth: 100},
                     {prop: "val", label: "值", minWidth: 100, showOverflowTooltip: true},
                     {prop: "type", label: "类型", minWidth: 80},
                     {prop: "remark", label: "备注", minWidth: 120},
@@ -123,7 +123,7 @@
                 editDialogVisible: false, // 新增编辑界面是否显示
                 editLoading: false,
                 dataFormRules: {
-                    key: [{required: true, message: "请输入名称", trigger: "blur"}],
+                    dicName: [{required: true, message: "请输入名称", trigger: "blur"}],
                     val: [{required: true, message: "请输入值", trigger: "blur"}],
                     type: [{required: true, message: "请输入类型", trigger: "blur"}],
                     remark: [{required: true, message: "请输入备注", trigger: "blur"}]
@@ -131,7 +131,7 @@
                 // 新增编辑界面数据
                 dataForm: {
                     id: "",
-                    key: "",
+                    dicName: "",
                     val: "",
                     type: "",
                     remark: ""
@@ -169,7 +169,7 @@
                 this.operation = true;
                 this.dataForm = {
                     id: "",
-                    key: "",
+                    dicName: "",
                     val: "",
                     type: "",
                     remark: ""
