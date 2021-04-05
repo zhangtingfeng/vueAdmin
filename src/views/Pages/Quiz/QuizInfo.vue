@@ -427,7 +427,7 @@
                 this.picList.splice(index, 1);
             },
             handleImgUploadChange(data) {
-                debugger;
+               // debugger;
                 this.picList = data.filelist;
                 this.picList = [this.picList[this.picList.length - 1]];
             },
