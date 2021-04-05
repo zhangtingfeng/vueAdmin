@@ -427,6 +427,7 @@
                 this.picList.splice(index, 1);
             },
             handleImgUploadChange(data) {
+                debugger;
                 this.picList = data.filelist;
                 this.picList = [this.picList[this.picList.length - 1]];
             },
@@ -436,6 +437,7 @@
                 this.imgsList.splice(index, 1);
             },
             handleImgImgUploadChange(data) {
+                debugger;
                 this.imgsList = data.filelist;
             },
 

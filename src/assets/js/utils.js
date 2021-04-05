@@ -292,7 +292,7 @@ export default {
     return this.request.gethostPath();
   },
   getUpLoadHost() {
-    return this.request.gethostPath() + "cmn/imgUpload";
+    return this.request.gethostPath() + "tools-service/uploads/upload3";
   },
 
   getVideoUpLoadHost() {
