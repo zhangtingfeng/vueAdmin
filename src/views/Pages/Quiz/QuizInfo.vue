@@ -167,6 +167,7 @@
         </el-form-item>
 
 
+
         <el-row>
           <el-form-item label="方案主图">
             <img-upload
@@ -180,7 +181,12 @@
           </el-form-item>
 
         </el-row>
-        <el-form-item label="图文详情" prop="InvestMemo">
+
+        <el-form-item label="简单介绍" prop="quizMemo">
+          <el-input v-model="dataForm.quizMemo" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="详情介绍" prop="InvestMemo">
           <div class="edit_container" style="max-height:500px;min-height:20px;overflow: auto;">
             <quill-editor
               v-model="dataForm.InvestMemo"
@@ -286,7 +292,7 @@
                     {key: 1, value: "审核通过"},
                     {key: 2, value: "审核不通过"}
                 ],
-                imgsList: [],
+                //  imgsList: [],
                 picList: [],
                 imageSizeLimit: 1, //图片上传个数控制
                 imageAccept: ".jpg,.jpeg,.png,.JPG,.JPEG", //图片上传格式
@@ -301,13 +307,13 @@
                     status: "",
                     name: "",
                     shop_id: "",
-                    t: "quiz",
-                    create_time: "desc",
-                    tsevice: "teacher-service"
+                    t: "invest_quiz",
+                    create_time: "desc"
                 },
                 dataForm: {
-                    ID: "",
+                    id: "",
                     Title: "",
+                    quizMemo: "",
                     InvestMemo: "",
                     Type_TestOrLearing: "",
                     Picture: "",
@@ -319,7 +325,6 @@
                 dataFormRules: {
 
                     Title: [{required: true, message: "请输入方案名称", trigger: "blur"}],
-                    InvestMemo: [{required: true, message: "请输入方案介绍，让用户知道这是什么测试", trigger: "blur"}],
 
                     quizStatus: [
                         {required: true, message: "请选择方案状态,处于停用状态还是使用状态", trigger: "change"}
@@ -389,6 +394,7 @@
 
             handleSuccess(res) {
                 // 获取富文本组件实例
+                //debugger;
                 let quill = this.$refs.myQuillEditor.quill;
                 // 如果上传成功
                 if (res.data.imgUrl) {
@@ -416,6 +422,7 @@
             saveHtml: function (event) {
             },
             handlePictureCardPreview(data) {
+                debugger;
                 var url = data.url;
                 this.filelist = [];
                 this.filelist.push(url);
@@ -423,24 +430,26 @@
             },
 
             handleImgUploadRemove(data) {
+                //debugger;
                 var index = data.index;
                 this.picList.splice(index, 1);
             },
             handleImgUploadChange(data) {
-               // debugger;
+                // debugger;
                 this.picList = data.filelist;
                 this.picList = [this.picList[this.picList.length - 1]];
             },
 
-            handleImgImgUploadRemove(data) {
-                var index = data.index;
-                this.imgsList.splice(index, 1);
-            },
-            handleImgImgUploadChange(data) {
-                debugger;
-                this.imgsList = data.filelist;
-            },
-
+            /*   handleImgImgUploadRemove(data) {
+                   //debugger;
+                   var index = data.index;
+                   this.imgsList.splice(index, 1);
+               },
+               handleImgImgUploadChange(data) {
+                  // debugger;
+                   this.imgsList = data.filelist;
+               },
+   */
             //取消按钮
             cleanDataForm() {
                 let this_ = this;
@@ -451,7 +460,7 @@
                 console.log(this.dataForm);
 
                 this.picList = [];
-                this.imgsList = [];
+                // this.imgsList = [];
             },
             addQuiz: function (params) {
                 let this_ = this;
@@ -467,7 +476,7 @@
                 this.dataForm.parentName = "";
 
                 this.picList = [];
-                this.imgsList = [];
+                // this.imgsList = [];
             },
             // 显示编辑界面
             handleDetail: function (params) {
@@ -478,7 +487,7 @@
                     params.row.parentName = params.row.type;
                     this.dataForm = Object.assign({}, params.row);
                     this.picList = [];
-                    this.imgsList = [];
+                    // this.imgsList = [];
 
                     if (params.row.imgs) {
                         $.each(params.row.imgs.split(","), function (key, val) {
@@ -490,6 +499,7 @@
                             }
                         });
                     }
+                    /*
                     if (params.row.pic) {
                         $.each(params.row.pic.split(","), function (key, val) {
                             let param = {};
@@ -499,7 +509,7 @@
                                 this_.imgsList.push(param);
                             }
                         });
-                    }
+                    }*/
                 });
             },
             //保存修改
@@ -509,23 +519,16 @@
                 this_.$refs.dataForm.validate(valid => {
                     if (valid) {
                         let params = Object.assign({}, this_.dataForm);
-                        params.t = "quzi";
+                        params.t = "invest_quiz";
 
-                        params.imgs = this.imgsList.map(item => item.url).toString();
-                        params.pic = this.picList.map(item => item.url).toString();
+                        // params.imgs = this.imgsList.map(item => item.url).toString();
+                        params.Picture = this.picList.map(item => item.url).toString();
 
-                        if (!params.pic) {
+                        if (!params.Picture) {
                             this.$message({message: "请选择主图", type: "error"});
                             return;
-                        } else if (!params.imgs) {
-                            this.$message({message: "请选择商品图片", type: "error"});
-                            return;
                         }
 
-                        if (!params.content) {
-                            this.$message({message: "请输入详情", type: "error"});
-                            return;
-                        }
 
                         params.status = "0";
 
@@ -598,7 +601,7 @@
                     ids = ids + data.params[i].id + ",";
                 }
 
-                data.t = "quiz";
+                data.t = "invest_quiz";
                 data.ids = ids;
                 this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
             },
@@ -643,7 +646,8 @@
             initColumns: function () {
                 this.columns = [
                     {prop: "Title", label: "方案名称", minWidth: 120},
-                    {prop: "InvestMemo", label: "方案介绍", minWidth: 120},
+                    {prop: "quizMemo", label: "简单介绍", minWidth: 120},
+
                     {
                         prop: "Picture",
                         label: "主图",
@@ -691,25 +695,32 @@
                     status: "",
                     name: "",
                     shop_id: "",
-                    t: "quiz"
+                    t: "invest_quiz"
                 }),
                     this.$refs.CyTable.resetForm();
                 this.findPage();
             },
             showStatus(row, column, cellValue, index) {
-                if (cellValue == 0) {
-                    return "审核中";
-                } else if (cellValue == 1) {
-                    return "审核成功";
+                // debugger;
+                for (let ddd = 0; ddd < this.popupQuizData.length; ddd++) {
+                    // debugger;
+                    if (this.popupQuizData[ddd].val == cellValue) {
+                        return this.popupQuizData[ddd].dicName;
+                    }
                 }
-                return "审核失败";
+                /* if (cellValue == 0) {
+                     return "审核中";
+                 } else if (cellValue == 1) {
+                     return "审核成功";
+                 }*/
+                return "";
             },
             // 所属题库初始化
             querypageList() {
                 var that = this;
-                this.utils.request.querypageList({t: "quiz"}, function (data) {
+                this.utils.request.querypageList({t: "invest_quiz"}, function (data) {
                     that.shopOptions = data.data;
-                }, "teacher-service");
+                });
             },
 
             handlePreview(file) {
@@ -718,7 +729,7 @@
             },
             handlePicRemove(file, fileList) {
                 if (picFileList && picFileListt.length == 0) {
-                    this.dataForm.pic = "";
+                    this.dataForm.Picture = "";
                 }
             },
             handleImgsRemove(file, fileList) {
@@ -729,7 +740,7 @@
             beforeClose() {
                 this.filelist = [];
             },
-            findDicType() {
+            async findDicType() {
                 var this_ = this;
 
                 this.utils.request.queryDicList('trainOrtest', function (res) {
@@ -760,10 +771,11 @@
                 this.dialogVisibleReviw = true;
             }
         },
-        mounted() {
+        async mounted() {
+            await this.findDicType();
+
             this.initColumns();
             this.querypageList();
-            this.findDicType();
 
             $(document).on(
                 "click",

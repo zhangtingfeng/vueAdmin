@@ -178,8 +178,8 @@ export default {
     editUser(data, callback) {
       this.requestPostUrl(data, 'student-service/SysMenu/editUser', callback)
     },
-    editInfo(data, callback) {
-      this.requestPostUrl(data, 'student-service/cmn/editInfo', callback)
+    editInfo(data, callback, defaultService = 'student-service') {
+      this.requestPostUrl(data, defaultService+'/cmn/editInfo', callback)
     },
     editParmas(data, callback) {
       this.requestPostUrl(data, 'student-service/cmn/editParmas', callback)
