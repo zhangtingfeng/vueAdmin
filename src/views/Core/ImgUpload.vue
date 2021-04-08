@@ -109,7 +109,7 @@ export default {
     },
     handleAvatarSuccess(res, file) {},
     handleImgUploadChange(file, fileList) {
-     //   debugger;
+        //debugger;
       if (file.response != undefined && file.response != null) {
         let uid = file.uid;
 

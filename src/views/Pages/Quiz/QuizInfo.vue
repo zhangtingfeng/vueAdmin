@@ -183,7 +183,7 @@
         </el-row>
 
         <el-form-item label="简单介绍" prop="quizMemo">
-          <el-input v-model="dataForm.quizMemo" auto-complete="off"></el-input>
+          <el-input type="textarea" class="textarea" height=200px width="600"  v-model="dataForm.quizMemo" auto-complete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="详情介绍" prop="InvestMemo">
@@ -281,6 +281,7 @@
         },
         data() {
             return {
+
                 dataStatusForm: {},
                 dialogVisibleReviw: false,
                 statusOptions: [
@@ -294,7 +295,7 @@
                 ],
                 //  imgsList: [],
                 picList: [],
-                imageSizeLimit: 1, //图片上传个数控制
+                imageSizeLimit: 10, //图片上传个数控制
                 imageAccept: ".jpg,.jpeg,.png,.JPG,.JPEG", //图片上传格式
                 imgUpload: this.utils.getUpLoadHost(),
                 typeOptions: [], //所属分类
@@ -422,7 +423,7 @@
             saveHtml: function (event) {
             },
             handlePictureCardPreview(data) {
-                debugger;
+               // debugger;
                 var url = data.url;
                 this.filelist = [];
                 this.filelist.push(url);
@@ -435,9 +436,11 @@
                 this.picList.splice(index, 1);
             },
             handleImgUploadChange(data) {
-                // debugger;
+               // debugger;
                 this.picList = data.filelist;
-                this.picList = [this.picList[this.picList.length - 1]];
+                if (this.picList >this.imageSizeLimit){////限制数量
+                    this.picList = [this.picList[this.picList.length - 1]];
+                }
             },
 
             /*   handleImgImgUploadRemove(data) {
@@ -480,6 +483,7 @@
             },
             // 显示编辑界面
             handleDetail: function (params) {
+                //debugger;
                 this.dialogVisible = true;
                 this.operation = false;
                 this.$nextTick(() => {
@@ -489,8 +493,8 @@
                     this.picList = [];
                     // this.imgsList = [];
 
-                    if (params.row.imgs) {
-                        $.each(params.row.imgs.split(","), function (key, val) {
+                    if (params.row.Picture) {
+                        $.each(params.row.Picture.split(","), function (key, val) {
                             let param = {};
                             if (this_.utils.isNull(val)) {
                             } else {
@@ -794,10 +798,17 @@
 
 <style scoped>
   /deep/ .form .el-input__inner {
-    width: 200px !important;
+    width: 340px;
   }
 
   /deep/ .el-icon-zoom-in {
     cursor: pointer;
+  }
+
+
+  .textarea >>> .el-textarea__inner{
+    font-family:"Microsoft" !important;
+    font-size:20px !important;
+    width: 640px;
   }
 </style>
