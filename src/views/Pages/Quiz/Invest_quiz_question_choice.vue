@@ -31,12 +31,41 @@
     <!--工具栏-->
     <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
       <el-form :inline="true" :model="filters" :size="size" ref="filters" class="form">
-        <el-form-item prop="Title">
-          <el-input auto-complete="off" placeholder="方案名称" v-model="filters.Title"></el-input>
+
+        <el-form-item prop="quizID">
+          <el-select clearable filterable placeholder="请选择所属方案" v-model="filters.quizID" @change="selectquizIDChanged">
+            <el-option
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
+              v-for="item in popupQuizListData"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
-        <el-form-item prop="status">
-          <el-select clearable filterable placeholder="请选择在线状态" v-model="filters.status">
+        <el-form-item prop="quiz_questionID">
+          <el-select clearable filterable placeholder="请选择所属问题" v-model="filters.quiz_questionID"
+                     @change="selectquiz_questionIDChanged">
+            <el-option
+              :key="item.id"
+              :label="item.ShortDes"
+              :value="item.id"
+              v-for="item in popupQuiz_questionListData"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+
+        <el-form-item prop="AnswerSortNum">
+          <el-input auto-complete="off" placeholder="排序编号" v-model="filters.AnswerSortNum"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="answertext">
+          <el-input auto-complete="off" placeholder="题目简短描述" v-model="filters.answertext"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="Status">
+          <el-select clearable filterable placeholder="请选择在线状态" v-model="filters.Status">
             <el-option
               :key="item.val"
               :label="item.dicName"
@@ -44,13 +73,10 @@
               v-for="item in popupQuizData"
             ></el-option>
           </el-select>
-          <!--  <el-select v-model="filters.status" placeholder="在线状态">
-              <el-option label="上线状态" :value="1"></el-option>
-              <el-option label="离线状态" :value="2"></el-option>
-            </el-select>-->
+
         </el-form-item>
         <el-form-item>
-          <kt-button icon="el-icon-s-check" label="新增" type="primary" @click="addQuiz"/>
+          <kt-button icon="el-icon-s-check" label="新增" type="primary" @click="addQuiz_question_choiceAction"/>
           <kt-button
             icon="fa fa-search"
             label="查询"
@@ -66,18 +92,6 @@
             @click="resetForm('filters')"
           />
         </el-form-item>
-        <!-- <el-form-item>
-          <kt-button
-            icon="el-icon-refresh"
-            label="审核"
-            type="primary"
-            @click="review"
-            perms="pages:activity:checked"
-          />
-        </el-form-item>
-       <el-form-item>-->
-        <!--<kt-button label="新增" type="primary" @click="handleAdd" />-->
-        <!--</el-form-item>-->
       </el-form>
     </div>
     <div class="toolbar" style="float:right;padding-top:10px;padding-right:15px;">
@@ -118,7 +132,7 @@
       ref="CyTable"
     ></cy-table>
     <!--新增编辑界面-->
-    <el-dialog title="方案详情" width="70%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+    <el-dialog title="题目详情" width="70%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form
         :model="dataForm"
         label-width="80px"
@@ -132,44 +146,55 @@
           <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="名称" prop="Title">
-          <el-input v-model="dataForm.Title" auto-complete="off"></el-input>
-        </el-form-item>
 
-        <el-form-item label="所属分类" prop="Type_TestOrLearing">
-          <el-select v-model="dataForm.Type_TestOrLearing" placeholder="请选择分类" clearable filterable>
+        <el-form-item label="所属方案" prop="quizID">
+          <el-select v-model="dataForm.quizID" placeholder="请选择方案" clearable filterable @change="selectquizIDChanged">
             <el-option
-              v-for="item in popupQuestionTypeData"
-              :key="item.val"
-              :label="item.dicName"
-              :value="item.val"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="报告费用" prop="ReportNeedMoney">
-          <el-input auto-complete="off" type="number" v-model="dataForm.ReportNeedMoney"></el-input>
-        </el-form-item>
-        <el-form-item label="开始费用" prop="TestNeedMoney">
-          <el-input auto-complete="off" type="number" v-model="dataForm.TestNeedMoney"></el-input>
-        </el-form-item>
-
-
-        <el-form-item label="在线状态" prop="quizStatus">
-          <el-select clearable filterable placeholder="请选择在线状态" v-model="dataForm.quizStatus">
-            <el-option
-              :key="item.val"
-              :label="item.dicName"
-              :value="item.val"
-              v-for="item in popupQuizData"
+              v-for="item in popupQuizListData"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
 
 
+        <el-form-item label="所属问题" prop="quiz_questionID">
+          <el-select v-model="dataForm.quiz_questionID" placeholder="请选择问题" clearable filterable
+                     @change="selectquiz_questionIDChanged">
+            <el-option
+              v-for="item in popupQuiz_questionListData"
+              :key="item.id"
+              :label="item.ShortDes"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="排序编号" prop="AnswerSortNum">
+          <el-input type="number" v-model="dataForm.AnswerSortNum" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="简单介绍" prop="answertext">
+          <el-input type="textarea" class="textarea" height=200px width="600" v-model="dataForm.answertext"
+                    auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="详情介绍" prop="content">
+          <div class="edit_container" style="max-height:500px;min-height:20px;overflow: auto;">
+            <quill-editor
+              v-model="dataForm.content"
+              ref="myQuillEditor"
+              :options="editorOption"
+              @blur="onEditorBlur($event)"
+              @focus="onEditorFocus($event)"
+              @change="onEditorChange($event)"
+            ></quill-editor>
+          </div>
+        </el-form-item>
 
         <el-row>
-          <el-form-item label="方案主图">
+          <el-form-item label="答案图片">
             <img-upload
               ref="ImgUpload"
               :filelist="picList"
@@ -182,14 +207,29 @@
 
         </el-row>
 
-        <el-form-item label="简单介绍" prop="quizMemo">
-          <el-input type="textarea" class="textarea" height=200px width="600"  v-model="dataForm.quizMemo" auto-complete="off"></el-input>
+
+        <el-form-item label="答案是否在线" prop="Status">
+          <el-select v-model="dataForm.Status" placeholder="题目是否在线" clearable filterable>
+            <el-option
+              v-for="item in popupQuizData"
+              :key="item.val"
+              :label="item.dicName"
+              :value="item.val"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
-        <el-form-item label="详情介绍" prop="InvestMemo">
+
+        <el-form-item label="分数" prop="correctAnswerScore">
+          <el-input auto-complete="off" type="number" placeholder="0表示不是正确答案，大于1表示是 或者分值。负数表示扣分"
+                    v-model="dataForm.correctAnswerScore"></el-input>
+        </el-form-item>
+
+
+        <el-form-item label="答案解析" prop="text">
           <div class="edit_container" style="max-height:500px;min-height:20px;overflow: auto;">
             <quill-editor
-              v-model="dataForm.InvestMemo"
+              v-model="dataForm.AnswerMemo"
               ref="myQuillEditor"
               :options="editorOption"
               @blur="onEditorBlur($event)"
@@ -229,32 +269,7 @@
       <el-button v-show="false" size="small" type="primary" id="uploadButton"></el-button>
     </el-upload>
 
-    <el-dialog :visible.sync="dialogVisibleReviw" title="审核" width="30%">
-      <el-form
-        :model="dataStatusForm"
-        label-width="120px"
-        ref="dataStatusForm"
-        label-position="right"
-        inline
-      >
-        <el-row>
-          <el-form-item label="请选择" prop="status">
-            <el-select v-model="dataStatusForm.status" style="width: 300px;">
-              <el-option
-                v-for="item in Roptions"
-                :key="item.key"
-                :label="item.value"
-                :value="item.key"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer" style="text-align:center">
-        <el-button type="primary" @click.native="submitStatus">提交</el-button>
-        <el-button @click="dialogVisibleReviw = false">取 消</el-button>
-      </div>
-    </el-dialog>
+
   </div>
 </template>
 
@@ -284,16 +299,6 @@
 
                 dataStatusForm: {},
                 dialogVisibleReviw: false,
-                statusOptions: [
-                    {key: "0", value: "审核中"},
-                    {key: "1", value: "审核通过"},
-                    {key: "2", value: "审核失败"}
-                ],
-                Roptions: [
-                    {key: 1, value: "审核通过"},
-                    {key: 2, value: "审核不通过"}
-                ],
-                //  imgsList: [],
                 picList: [],
                 imageSizeLimit: 10, //图片上传个数控制
                 imageAccept: ".jpg,.jpeg,.png,.JPG,.JPEG", //图片上传格式
@@ -307,34 +312,33 @@
                 filters: {
                     status: "",
                     name: "",
-                    shop_id: "",
-                    t: "invest_quiz",
-                    create_time: "desc"
+                    t: "invest_quiz_question_choice",
+                    create_time: "asc"
                 },
                 dataForm: {
                     id: "",
-                    Title: "",
-                    quizMemo: "",
-                    InvestMemo: "",
-                    Type_TestOrLearing: "",
+                    quiz_questionID: "",
+                    AnswerSortNum: "",
+                    answertext: "",
+                    content: "",
                     Picture: "",
-                    ReportNeedMoney: "",
-                    TestNeedMoney: "",
-                    quizStatus: "",
-
+                    quiz_question_Status: "",
+                    correctAnswerScore: "",
+                    Status: "",
+                    AnswerMemo: ""
                 },
                 dataFormRules: {
-
-                    Title: [{required: true, message: "请输入方案名称", trigger: "blur"}],
-
-                    quizStatus: [
-                        {required: true, message: "请选择方案状态,处于停用状态还是使用状态", trigger: "change"}
+                    quiz_questionID: [
+                        {required: true, message: "请选择问题", trigger: "change"}
                     ],
-                    Picture: [{required: true, message: "请上传主图", trigger: "blur"}]
+
+                    correctAnswerScore: [
+                        {required: true, message: "请输入是否是答案", trigger: "change"}
+                    ]
                 },
                 columns: [],
                 filterColumns: [],
-                pageRequest: {pageNum: 1, pageSize: 10},
+                pageRequest: {pageNum: 1, pageSize: 100},
                 pageResult: {},
                 checked: [],
                 operation: false, // true:新增, false:编辑
@@ -344,8 +348,11 @@
                 deptData: [],
                 dialogVisibleImageList: false,
                 filelist: [],
-                popupQuestionTypeData: [],
+
                 popupQuizData: [],
+                popupQuizListData: [],
+                popupquestiontypeListData: [],
+                popupQuiz_questionListData: [],
                 popupTreeProps: {
                     label: "name",
                     children: "children"
@@ -399,12 +406,11 @@
                 let quill = this.$refs.myQuillEditor.quill;
                 // 如果上传成功
                 if (res.data.imgUrl) {
-                    debugger;
                     // 获取光标所在位置
                     let length = quill.getSelection().index;
                     // 插入图片，res为服务器返回的图片链接地址
 
-                    quill.insertEmbed(length, "image",'/'+res.data.imgUrl);
+                    quill.insertEmbed(length, "image", res.data.imgUrl);
                     // 调整光标到最后
                     quill.setSelection(length + 1);
                 } else {
@@ -424,7 +430,7 @@
             saveHtml: function (event) {
             },
             handlePictureCardPreview(data) {
-               // debugger;
+                // debugger;
                 var url = data.url;
                 this.filelist = [];
                 this.filelist.push(url);
@@ -437,23 +443,14 @@
                 this.picList.splice(index, 1);
             },
             handleImgUploadChange(data) {
-               // debugger;
+                // debugger;
                 this.picList = data.filelist;
-                if (this.picList >this.imageSizeLimit){////限制数量
+                if (this.picList > this.imageSizeLimit) {////限制数量
                     this.picList = [this.picList[this.picList.length - 1]];
                 }
             },
 
-            /*   handleImgImgUploadRemove(data) {
-                   //debugger;
-                   var index = data.index;
-                   this.imgsList.splice(index, 1);
-               },
-               handleImgImgUploadChange(data) {
-                  // debugger;
-                   this.imgsList = data.filelist;
-               },
-   */
+
             //取消按钮
             cleanDataForm() {
                 let this_ = this;
@@ -466,7 +463,7 @@
                 this.picList = [];
                 // this.imgsList = [];
             },
-            addQuiz: function (params) {
+            addQuiz_question_choiceAction: function (params) {
                 let this_ = this;
                 this.dialogVisible = true;
                 this.operation = false;
@@ -474,13 +471,13 @@
                     this.$refs["dataForm"].resetFields();
                 }
                 this.dataForm.status = 0;
+                this.dataForm.correctAnswerScore = 0;
                 if (this.login_shop_id) {
                     this.dataForm.shop_id = this.login_shop_id;
                 }
                 this.dataForm.parentName = "";
 
                 this.picList = [];
-                // this.imgsList = [];
             },
             // 显示编辑界面
             handleDetail: function (params) {
@@ -514,18 +511,12 @@
                 this_.$refs.dataForm.validate(valid => {
                     if (valid) {
                         let params = Object.assign({}, this_.dataForm);
-                        params.t = "invest_quiz";
+                        params.t = "invest_quiz_question_choice";
 
                         // params.imgs = this.imgsList.map(item => item.url).toString();
                         params.Picture = this.picList.map(item => item.url).toString();
 
-                        if (!params.Picture) {
-                            this.$message({message: "请选择主图", type: "error"});
-                            return;
-                        }
 
-
-                        params.status = "0";
 
                         this_.editLoading = true;
                         this_.utils.request.editInfo(params, this_.editInfoBack);
@@ -544,13 +535,13 @@
                 }
             },
             findPage: function (data) {
-                let login_shop_id = localStorage.getItem("login_shop_id");
-                if (login_shop_id) {
-                    this.login_shop_id = login_shop_id;
-                }
-                if (this.login_shop_id) {
-                    this.filters.shop_id = this.login_shop_id;
-                }
+                /*  let login_shop_id = localStorage.getItem("login_shop_id");
+                  if (login_shop_id) {
+                      this.login_shop_id = login_shop_id;
+                  }
+                  if (this.login_shop_id) {
+                      this.filters.shop_id = this.login_shop_id;
+                  }*/
                 this.$refs.CyTable.findPage(this.filters);
             },
 
@@ -587,7 +578,7 @@
                         return;
                     }
                     exportExcel(res.data.rows, filterColumns, fileName);
-                }, filters.tService);
+                });
             },
             // 批量删除
             handleDelete: function (data) {
@@ -596,7 +587,7 @@
                     ids = ids + data.params[i].id + ",";
                 }
 
-                data.t = "invest_quiz";
+                data.t = "invest_quiz_question_choice";
                 data.ids = ids;
                 this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
             },
@@ -640,9 +631,15 @@
             // 处理表格列过滤显示
             initColumns: function () {
                 this.columns = [
-                    {prop: "id", label: "ID", minWidth: 120},
-                    {prop: "Title", label: "方案名称", minWidth: 120},
 
+                    {
+                        prop: "quiz_questionID",
+                        label: "所属问题",
+                        minWidth: 120,
+                        formatter: this.showQuzi_ChoiceListStatus
+                    },
+                    {prop: "AnswerSortNum", label: "排序编号", minWidth: 120},
+                    {prop: "answertext", label: "简单介绍", minWidth: 120},
 
                     {
                         prop: "Picture",
@@ -650,15 +647,13 @@
                         minWidth: 120,
                         formatter: this.showPhto
                     },
-                    {prop: "ReportNeedMoney", label: "显示报告费用", minWidth: 120},
                     {
-                        prop: "TestNeedMoney",
-                        label: "开始测试费用",
-                        minWidth: 120,
-                        showOverflowTooltip: false
+                        prop: "correctAnswerScore",
+                        label: "分值",
+                        minWidth: 120
                     },
                     {
-                        prop: "quizStatus",
+                        prop: "Status",
                         label: "状态",
                         minWidth: 120,
                         formatter: this.showStatus
@@ -692,7 +687,7 @@
                     status: "",
                     name: "",
                     shop_id: "",
-                    t: "invest_quiz"
+                    t: "invest_quiz_question_choice"
                 }),
                     this.$refs.CyTable.resetForm();
                 this.findPage();
@@ -705,13 +700,30 @@
                         return this.popupQuizData[ddd].dicName;
                     }
                 }
-                /* if (cellValue == 0) {
-                     return "审核中";
-                 } else if (cellValue == 1) {
-                     return "审核成功";
-                 }*/
+
                 return "";
             },
+            showQuziListStatus(row, column, cellValue, index) {
+                // debugger;
+                for (let ddd = 0; ddd < this.popupQuizListData.length; ddd++) {
+                    // debugger;
+                    if (this.popupQuizListData[ddd].id == cellValue) {
+                        return this.popupQuizListData[ddd].title;
+                    }
+                }
+                return "";
+            },
+            showQuzi_ChoiceListStatus(row, column, cellValue, index) {
+
+                for (let ddd = 0; ddd < this.popupQuiz_questionListData.length; ddd++) {
+                    //debugger;
+                    if (this.popupQuiz_questionListData[ddd].id == cellValue) {
+                        return this.popupQuiz_questionListData[ddd].ShortDes;
+                    }
+                }
+                return "";
+            },
+
             timestampToTime(row, column, cellValue, index) {
                 var date = new Date(cellValue); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
                 let Y = date.getFullYear() + '-';
@@ -720,15 +732,27 @@
                 let h = date.getHours() + ':';
                 let m = date.getMinutes() + ':';
                 let s = date.getSeconds();
-                return Y + M + D+ h+m+s;
+                return Y + M + D + h + m + s;
+            },
+            showquestiontypeStatus(row, column, cellValue, index) {
+                // debugger;
+                for (let ddd = 0; ddd < this.popupquestiontypeListData.length; ddd++) {
+                    // debugger;
+                    if (this.popupquestiontypeListData[ddd].val == cellValue) {
+                        return this.popupquestiontypeListData[ddd].dicName;
+                    }
+                }
+
+                return "";
             },
             // 所属题库初始化
             querypageList() {
                 var that = this;
-                this.utils.request.querypageList({t: "invest_quiz"}, function (data) {
+                this.utils.request.querypageList({t: "invest_quiz_question_choice"}, function (data) {
                     that.shopOptions = data.data;
                 });
             },
+
 
             handlePreview(file) {
                 this.dialogImageUrl = file.url;
@@ -750,17 +774,44 @@
             async findDicType() {
                 var this_ = this;
 
-                let letres = await this.utils.request.queryDicList('trainOrtest');
-                if (letres.code = 200) {
-                    this_.popupQuestionTypeData = letres.data;
+                let lerRes = await this.utils.request.queryDicList('quizStatusType');
+                if (lerRes.code = 200) {
+                    this_.popupQuizData = lerRes.data;
+                }
+                lerRes = await this.utils.request.queryDicList('questiontype');
+                if (lerRes.code = 200) {
+                    this_.popupquestiontypeListData = lerRes.data;
                 }
                 //debugger;
                 //
-                letres = await this.utils.request.queryDicList('quizStatusType');
-                if (letres.code = 200) {
-                    this_.popupQuizData = letres.data;
-                }
+                let _thisvar = {}
+                _thisvar.start = 1;
+                _thisvar.limit = 100;
+                _thisvar.status = "";
+                _thisvar.t = "invest_quiz_question";
+                _thisvar.sql = "queryQuizList";
 
+                //debugger;
+                lerRes = await this.utils.request.queryGetCmnQueryPage(_thisvar);
+                this_.popupQuizListData = lerRes.data.rows;
+
+
+                await this.readDicquestionListData();
+
+            },
+
+            async readDicquestionListData(quizIDvalue) {
+                let _thisvar = {}
+                _thisvar.start = 1;
+                _thisvar.limit = 100;
+                _thisvar.status = "";
+                _thisvar.t = "invest_quiz_question_choice";
+                _thisvar.sql = "queryquiz_questionList";
+                _thisvar.quizID=quizIDvalue;
+
+                let lerRes = await this.utils.request.queryGetCmnQueryPage(_thisvar);
+                debugger;
+                this.popupQuiz_questionListData = lerRes.data.rows;
             },
 
 
@@ -770,10 +821,46 @@
                     return;
                 }
                 this.dialogVisibleReviw = true;
+            },
+            selectquizIDChanged(value) {
+                localStorage.setItem("quizIDMemory", value);
+                this.dataForm.quizID = value;
+                this.filters.quizID = value;
+
+                console.log("quizIDMemory" + value);
+
+                this.dataForm.quiz_questionID = null;
+                this.filters.quiz_questionID = null;
+
+                 this.readDicquestionListData(value);
+            },
+            selectquiz_questionIDChanged(value) {
+                localStorage.setItem("quiz_questionIDMemory", value);
+                this.dataForm.quiz_questionID = value;
+                this.filters.quiz_questionID = value;
+
+                console.log("quiz_questionIDMemory" + value);
             }
+
+
         },
-        async mounted() {
+        async beforeMount() {
             await this.findDicType();
+            if (localStorage.getItem("quizIDMemory") != null) {
+                //  debugger;
+                //  filters.quizID
+                this.dataForm.quizID = Number(localStorage.getItem("quizIDMemory"));
+                this.filters.quizID = Number(localStorage.getItem("quizIDMemory"));
+            }
+
+            if (localStorage.getItem("quiz_questionIDMemory") != null) {
+                this.dataForm.quiz_questionID = Number(localStorage.getItem("quiz_questionIDMemory"));
+                this.filters.quiz_questionID = Number(localStorage.getItem("quiz_questionIDMemory"));
+            }
+
+        },
+        mounted() {
+
 
             this.initColumns();
             this.querypageList();
@@ -803,8 +890,9 @@
   }
 
 
-  .textarea >>> .el-textarea__inner{
-    font-family:"Microsoft" !important;
+  .textarea >>> .el-textarea__inner {
+    font-family: "Microsoft" !important;
+
     width: 640px;
   }
 </style>

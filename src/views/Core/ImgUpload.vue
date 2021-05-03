@@ -9,7 +9,7 @@
           :tabindex="index"
           class="el-upload-list__item is-success"
         >
-          <img :src="file.url" alt class="el-upload-list__item-thumbnail" />
+          <img :src="BaseResourceUrl+'/'+file.url" alt="ok" class="el-upload-list__item-thumbnail" />
           <label class="el-upload-list__item-status-label">
             <i class="el-icon-upload-success el-icon-check"></i>
           </label>
@@ -85,7 +85,8 @@ export default {
       dialogImageUrl: "",
       imgUpload: this.utils.getUpLoadHost(),
       dialogVisible: false,
-      disabled: false
+        disabled: false,
+        BaseResourceUrl: this.utils.getBaseResourceUrl()
     };
   },
   mounted() {

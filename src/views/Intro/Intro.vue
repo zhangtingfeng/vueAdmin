@@ -204,7 +204,7 @@
                     if (res.code==200 && res.data.rows != null) {
                         _this.incomeOrderNumRow = res.data.rows[0];
                     }
-                },this_.incoeNumfilters.tService);
+                },_this.incoeNumfilters.tService);
             },
             findUserNumPageincoefilters: function () {
                 let _this = this;
@@ -216,7 +216,7 @@
                     if (res.code==200 && res.data.rows != null) {
                         _this.incomeUserNumRow = res.data.rows[0];
                     }
-                },this_.incoeUserNumfilters.tService);
+                },_this.incoeUserNumfilters.tService);
             },
             findUserPageincoefilters: function () {
                 let _this = this;

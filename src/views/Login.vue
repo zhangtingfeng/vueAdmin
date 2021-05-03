@@ -58,14 +58,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import Cookies from "js-cookie";
-import ThemePicker from "@/components/ThemePicker";
-import LangSelector from "@/components/LangSelector";
-//导入通用的消息提示方法。
-import * as messageUtil from "@/assets/js/messageUtil.js";
+    import {mapState} from "vuex";
+    import ThemePicker from "@/components/ThemePicker";
+    import LangSelector from "@/components/LangSelector";
+    //导入通用的消息提示方法。
+    import * as messageUtil from "@/assets/js/messageUtil.js";
 
-export default {
+    export default {
   name: "Login",
   components: {
     ThemePicker,
@@ -157,13 +156,11 @@ export default {
         }
       });
     },
-    refreshCaptcha() {
+      async refreshCaptcha() {
        // debugger;
-        let letthis=this;
-        this.utils.request.getRequest('student-service/SysUser/getLoginCode/'+localStorage.getItem("vtoken")+"?time="+(new Date().getTime()), function (data) {
-            letthis.loginForm.src ="data:image/png;base64,"+data.data.ImageBase64;
-             //debugger;
-        });
+          let letthis = this;
+          let data = await this.utils.request.getRequest('student-service/SysUser/getLoginCode/' + localStorage.getItem("vtoken") + "?time=" + (new Date().getTime()));
+          letthis.loginForm.src = "data:image/png;base64," + data.data.ImageBase64;
 /*
       this.loginForm.src =
         this.utils.getHost() +

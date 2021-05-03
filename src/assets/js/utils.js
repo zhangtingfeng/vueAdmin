@@ -1,5 +1,4 @@
 import axios from 'axios'
-import qs from 'qs'
 import router from '../../router'
 import {Message} from 'element-ui'
 
@@ -89,7 +88,7 @@ export default {
         callback(data);
       });
     },
-    requestGetUrl(argurl, callback) {
+    async requestGetUrl(argurl) {
       var paramsdata = {};
       paramsdata = {
         'loginChannel': 'pc',
@@ -111,32 +110,34 @@ export default {
 
 
       //debugger;
-      axios.get(url, {
+      let rsp = await axios.get(url, {
           params: paramsdata,
           headers: {
             'headRouter': argurl
           }
         }
-      ).then(rsp => {
+      );
+
+      //  .then(rsp => {
+
+      if (rsp.data.code == "4000") {
+        Message.error({//弹窗使用方法
+          showClose: true,
+          duration: 2000,  //警告的消息3秒钟后消失
+          message: "登录失效，请重新登录",
+        });
 
 
-        if (rsp.data.code == "4000") {
-          Message.error({//弹窗使用方法
-            showClose: true,
-            duration: 2000,  //警告的消息3秒钟后消失
-            message: "登录失效，请重新登录",
-          });
+        setTimeout(function () {
+          localStorage.removeItem('token');
+          router.push("/login");
+        }, 3000);
 
+      } else {
+        return (rsp.data);
+      }
 
-          setTimeout(function () {
-            localStorage.removeItem('token');
-            router.push("/login");
-          }, 3000);
-
-        } else {
-          callback(rsp.data);
-        }
-
+      /*
 
       }).catch(error => {
         var data = {};
@@ -144,10 +145,14 @@ export default {
         data.msg = error.message;
         callback(data);
       });
-    },
-    getRequest(url, callback) {
+    */
+
+
+    }
+    ,
+    async getRequest(url) {
       //debugger;
-      this.requestGetUrl(url, callback);
+      return await this.requestGetUrl(url);
     },
     getVtoken(data, callback) {
       //debugger;
@@ -190,8 +195,17 @@ export default {
     querypageList: function (data, callback, defaultService = 'student-service') { // 通用 查询列表
       this.requestPostUrl(data, defaultService + '/cmn/queryList', callback);
     },
-    queryDicList: function (dictype, callback) { // 通用 查询列表
-      this.getRequest('student-service/getDic/dictype/' + dictype, callback);
+    async queryDicList(dictype) { // 通用 查询列表
+     return  await this.getRequest('student-service/getDic/dictype/' + dictype);
+    },
+    async queryGetCmnQueryPage (data,tService="student-service") { // 通用 查询列表
+      var paramsdata = {};
+      paramsdata.data=data;
+
+      let letSsrt=  JSON.stringify(paramsdata);
+      letSsrt= encodeURIComponent(letSsrt);
+      return  await this.getRequest(tService+'/cmn/queryPage/'+ letSsrt);
+      //this.requestPostUrl(data, tService+'/cmn/queryPage', callback);
     },
     checkShop: function (data, callback) { // 通用 查询列表
       this.requestPostUrl(data, 'student-service/cmn/checkShop', callback);
@@ -294,7 +308,9 @@ export default {
   getUpLoadHost() {
     return this.request.gethostPath() + "tools-service/uploads/imgUpload";
   },
-
+  getBaseResourceUrl() {
+    return  "https://admin.edu.eggsoft.cn";
+  },
   getVideoUpLoadHost() {
     return this.request.gethostPath() + "cmn/videoUpload";
   },

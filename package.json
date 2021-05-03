@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf",
     "eureka": "webpack-dev-server --inline --progress --config build/devlocal",
-    "start": "npm run dev",
+    "start": "npm run eureka",
     "build": "node build/build.js"
   },
   "dependencies": {
