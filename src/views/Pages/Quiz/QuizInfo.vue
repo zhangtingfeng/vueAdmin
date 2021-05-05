@@ -166,7 +166,16 @@
           </el-select>
         </el-form-item>
 
-
+        <el-form-item label="页面位置" prop="PagePos">
+          <el-select clearable filterable placeholder="请选择页面位置" v-model="dataForm.PagePos">
+            <el-option
+              :key="item.val"
+              :label="item.dicName"
+              :value="item.val"
+              v-for="item in popupPagePosData"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
         <el-row>
           <el-form-item label="方案主图">
@@ -321,6 +330,7 @@
                     ReportNeedMoney: "",
                     TestNeedMoney: "",
                     quizStatus: "",
+                    PagePos:""
 
                 },
                 dataFormRules: {
@@ -346,6 +356,7 @@
                 filelist: [],
                 popupQuestionTypeData: [],
                 popupQuizData: [],
+                popupPagePosData: [],
                 popupTreeProps: {
                     label: "name",
                     children: "children"
@@ -664,6 +675,12 @@
                         formatter: this.showStatus
                     },
                     {
+                        prop: "PagePos",
+                        label: "页面位置",
+                        minWidth: 120,
+                        formatter: this.showPagePos
+                    },
+                    {
                         prop: "create_time",
                         label: "创建时间",
                         minWidth: 180,
@@ -705,13 +722,22 @@
                         return this.popupQuizData[ddd].dicName;
                     }
                 }
-                /* if (cellValue == 0) {
-                     return "审核中";
-                 } else if (cellValue == 1) {
-                     return "审核成功";
-                 }*/
+
                 return "";
             },
+
+            showPagePos(row, column, cellValue, index) {
+                // debugger;
+                for (let ddd = 0; ddd < this.popupPagePosData.length; ddd++) {
+                    // debugger;
+                    if (this.popupPagePosData[ddd].val == cellValue) {
+                        return this.popupPagePosData[ddd].dicName;
+                    }
+                }
+
+                return "";
+            },
+
             timestampToTime(row, column, cellValue, index) {
                 var date = new Date(cellValue); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
                 let Y = date.getFullYear() + '-';
@@ -760,7 +786,10 @@
                 if (letres.code = 200) {
                     this_.popupQuizData = letres.data;
                 }
-
+                letres = await this.utils.request.queryDicList('PagePos');
+                if (letres.code = 200) {
+                    this_.popupPagePosData = letres.data;
+                }
             },
 
 
