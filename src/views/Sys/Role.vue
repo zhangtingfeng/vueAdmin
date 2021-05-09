@@ -255,6 +255,9 @@ export default {
       this.menu.t = "sysMenu";
       var this_ = this;
       this.utils.request.findMenuTree(this.menu, function(data) {
+          if (data.data==null){
+              this.$message({ message: "可能需要重新登陆，cookis过期", type: "error" });
+          }
         this_.menuData = data.data;
         this_.menuLoading = false;
       });
