@@ -32,11 +32,11 @@
     <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
       <el-form :inline="true" :model="filters" :size="size" ref="filters" class="form">
         <el-form-item prop="Title">
-          <el-input auto-complete="off" placeholder="方案名称" v-model="filters.Title"></el-input>
+          <el-input auto-complete="off" placeholder="商品名称" v-model="filters.Title"></el-input>
         </el-form-item>
 
         <el-form-item prop="status">
-          <el-select clearable filterable placeholder="请选择在线状态" v-model="filters.status">
+          <el-select clearable filterable placeholder="请选择商品分类" v-model="filters.status">
             <el-option
               :key="item.val"
               :label="item.dicName"
@@ -50,7 +50,8 @@
             </el-select>-->
         </el-form-item>
         <el-form-item>
-          <kt-button icon="el-icon-s-check" label="新增" type="primary" @click="addQuiz"/>
+          <input type="file" @change="inputFileChange" ref="inputer" multiple accept="xlsx">
+          <kt-button icon="el-icon-s-check" label="上传" type="primary" @click="addQuiz"/>
           <kt-button
             icon="fa fa-search"
             label="查询"
@@ -92,6 +93,10 @@
             </el-tooltip>
             <el-tooltip content="列显示" placement="top">
               <el-button icon="fa fa-filter" @click="displayFilterColumnsDialog"></el-button>
+            </el-tooltip>
+            <el-tooltip content="导入" placement="top">
+              <input type="file" ref="myfile">
+              <el-button icon="fa fa-building-o" @click="uploadExcel" id="uploadExcel"></el-button>
             </el-tooltip>
             <el-tooltip content="导出" placement="top">
               <el-button icon="fa fa-file-excel-o" @click="downloadExcel" id="downloadExcel"></el-button>
@@ -301,7 +306,7 @@
         },
         data() {
             return {
-
+                uploadfiles:'',
                 dataStatusForm: {},
                 dialogVisibleReviw: false,
                 statusOptions: [
@@ -416,7 +421,9 @@
             }
         },
         methods: {
-
+            inputFileChange(e){
+                this.uploadfiles = e.target.files[0] //当input中选择文件时触发一个事件并让data当中的files拿到所选择的文件
+            },
             handleSuccess(res) {
                 // 获取富文本组件实例
                 //debugger;

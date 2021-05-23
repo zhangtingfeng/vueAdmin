@@ -44,8 +44,8 @@
         </el-form-item>
 
 
-        <el-form-item prop="QuetionSortNum">
-          <el-input auto-complete="off" placeholder="排序编号" v-model="filters.QuetionSortNum"></el-input>
+        <el-form-item prop="QuestionSortNum">
+          <el-input auto-complete="off" placeholder="排序编号" v-model="filters.QuestionSortNum"></el-input>
         </el-form-item>
 
         <el-form-item prop="ShortDes">
@@ -146,8 +146,8 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="排序编号" prop="QuetionSortNum">
-          <el-input type="number" v-model="dataForm.QuetionSortNum" auto-complete="off"></el-input>
+        <el-form-item label="排序编号" prop="QuestionSortNum">
+          <el-input type="number" v-model="dataForm.QuestionSortNum" auto-complete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="简单介绍" prop="ShortDes">
@@ -320,7 +320,7 @@
                 dataForm: {
                     id: "",
                     quizID: "",
-                    QuetionSortNum: "",
+                    QuestionSortNum: "",
                     ShortDes: "",
                     content: "",
                     Picture: "",
@@ -655,7 +655,7 @@
                         minWidth: 120,
                         formatter: this.showQuziListStatus
                     },
-                    {prop: "QuetionSortNum", label: "排序编号", minWidth: 120},
+                    {prop: "QuestionSortNum", label: "排序编号", minWidth: 120},
                     {prop: "ShortDes", label: "简单介绍", minWidth: 120},
 
                     {
