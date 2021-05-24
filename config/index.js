@@ -12,14 +12,14 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/StaticImg': {
-        target: 'http://admin.edu.eggsoft.cn',//设置你调用的接口域名和端口号npm run eureka 48001    npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
+        target: 'http://admin.edu.eggsoft.cn/test',//设置你调用的接口域名和端口号npm run eureka 48001    npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
         changeOrigin: true,
         pathRewrite: {
           '^/StaticImg': '/StaticImg'//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
         }
       },
       '/tools-service': {
-        target: 'http://localhost:48020',//设置你调用的接口域名和端口号npm run eureka 48001 http://apiupload.edu.eggsoft.cn   npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
+        target: 'http://localhost:48020',//设置你调用的接口域名和端口号npm run eureka 48001 http://localhost:48020 http://apiupload.edu.eggsoft.cn   npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
         changeOrigin: true,
         pathRewrite: {
           '^/tools-service': '/tools-service'//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可

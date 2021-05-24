@@ -32,11 +32,11 @@
     <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
       <el-form :inline="true" :model="filters" :size="size" ref="filters" class="form">
         <el-form-item prop="Title">
-          <el-input auto-complete="off" placeholder="商品名称" v-model="filters.Title"></el-input>
+          <el-input auto-complete="off" placeholder="商品名称" v-model="filters.goodname"></el-input>
         </el-form-item>
 
         <el-form-item prop="status">
-          <el-select clearable filterable placeholder="请选择商品分类" v-model="filters.status">
+          <el-select clearable filterable placeholder="请选择商品分类" v-model="filters.goodsclass">
             <el-option
               :key="item.val"
               :label="item.dicName"
@@ -49,16 +49,7 @@
               <el-option label="离线状态" :value="2"></el-option>
             </el-select>-->
         </el-form-item>
-        <el-form-item>
-          <input type="file" @change="inputFileChange" ref="inputer" multiple accept="xlsx">
-          <kt-button icon="el-icon-s-check" label="上传" type="primary" @click="addQuiz"/>
-          <kt-button
-            icon="fa fa-search"
-            label="查询"
-            type="primary"
-            @click="$refs.CyTable.findPageBeforeRestPages(filters)"
-          />
-        </el-form-item>
+
         <el-form-item>
           <kt-button
             icon="el-icon-refresh"
@@ -67,16 +58,43 @@
             @click="resetForm('filters')"
           />
         </el-form-item>
-        <!-- <el-form-item>
+
+        <el-form-item>
           <kt-button
-            icon="el-icon-refresh"
-            label="审核"
+            icon="fa fa-search"
+            label="查询"
             type="primary"
-            @click="review"
-            perms="pages:activity:checked"
+            @click="$refs.CyTable.findPageBeforeRestPages(filters)"
           />
         </el-form-item>
-       <el-form-item>-->
+        <br/>
+        <el-upload
+          :action="imgUpload"
+          :on-success="handleExcelSuccess"
+          :show-file-list="false"
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          :max-size="2048"
+        >
+          <kt-button icon="el-icon-s-check" label="导入厂家报价" type="primary" />
+        </el-upload>
+        <br/>
+        <!--  <kt-button icon="el-icon-s-check" label="导入厂家报价" type="primary" @click="uploadPrice"/>
+          <el-button icon="el-icon-s-check" type="primary" label="导入厂家报价" id="uploadButtonexcel"></el-button>
+
+          <el-form-item>
+            <input type="file" style="max-width: 150px;" @change="inputFileChange" ref="inputer" multiple accept="xlsx">
+            <kt-button icon="el-icon-s-check" label="导入厂家报价" type="primary" @click="uploadPrice"/>
+          </el-form-item> -->
+          <!-- <el-form-item>
+            <kt-button
+              icon="el-icon-refresh"
+              label="审核"
+              type="primary"
+              @click="review"
+              perms="pages:activity:checked"
+            />
+          </el-form-item>
+         <el-form-item>-->
         <!--<kt-button label="新增" type="primary" @click="handleAdd" />-->
         <!--</el-form-item>-->
       </el-form>
@@ -94,10 +112,7 @@
             <el-tooltip content="列显示" placement="top">
               <el-button icon="fa fa-filter" @click="displayFilterColumnsDialog"></el-button>
             </el-tooltip>
-            <el-tooltip content="导入" placement="top">
-              <input type="file" ref="myfile">
-              <el-button icon="fa fa-building-o" @click="uploadExcel" id="uploadExcel"></el-button>
-            </el-tooltip>
+
             <el-tooltip content="导出" placement="top">
               <el-button icon="fa fa-file-excel-o" @click="downloadExcel" id="downloadExcel"></el-button>
             </el-tooltip>
@@ -208,7 +223,8 @@
         </el-row>
 
         <el-form-item label="简单介绍" prop="quizMemo">
-          <el-input type="textarea" class="textarea" height=200px width="600"  v-model="dataForm.quizMemo" auto-complete="off"></el-input>
+          <el-input type="textarea" class="textarea" height=200px width="600" v-model="dataForm.quizMemo"
+                    auto-complete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="详情介绍" prop="InvestMemo">
@@ -284,584 +300,578 @@
 </template>
 
 <script>
-    import PopupTreeInput from "@/components/PopupTreeInput";
-    import KtTable from "@/views/Core/KtTable";
-    import TreeSelect from "@riophae/vue-treeselect";
-    import KtButton from "@/views/Core/KtButton";
-    import TableColumnFilterDialog from "@/views/Core/TableColumnFilterDialog";
-    import {format, formatDate} from "@/utils/datetime";
-    import CyTable from "@/views/Core/CyTable";
-    import ImgUpload from "@/views/Core/ImgUpload";
-    import {exportExcel} from "@/utils/excel";
+  import PopupTreeInput from "@/components/PopupTreeInput";
+  import KtTable from "@/views/Core/KtTable";
+  import TreeSelect from "@riophae/vue-treeselect";
+  import KtButton from "@/views/Core/KtButton";
+  import TableColumnFilterDialog from "@/views/Core/TableColumnFilterDialog";
+  import {format, formatDate} from "@/utils/datetime";
+  import CyTable from "@/views/Core/CyTable";
+  import ImgUpload from "@/views/Core/ImgUpload";
+  import {exportExcel} from "@/utils/excel";
 
-    export default {
-        components: {
-            PopupTreeInput,
-            KtTable,
-            CyTable,
-            KtButton,
-            TableColumnFilterDialog,
-            ImgUpload,
-            TreeSelect
+  export default {
+    components: {
+      PopupTreeInput,
+      KtTable,
+      CyTable,
+      KtButton,
+      TableColumnFilterDialog,
+      ImgUpload,
+      TreeSelect
+    },
+    data() {
+      return {
+        uploadfiles: '',
+        dataStatusForm: {},
+        dialogVisibleReviw: false,
+        statusOptions: [
+          {key: "0", value: "审核中"},
+          {key: "1", value: "审核通过"},
+          {key: "2", value: "审核失败"}
+        ],
+        Roptions: [
+          {key: 1, value: "审核通过"},
+          {key: 2, value: "审核不通过"}
+        ],
+        //  imgsList: [],
+        picList: [],
+        imageSizeLimit: 10, //图片上传个数控制
+        imageAccept: ".jpg,.jpeg,.png,.JPG,.JPEG", //图片上传格式
+        imgUpload: this.utils.getUpLoadHost(),
+        typeOptions: [], //所属分类
+        shopOptions: [], //店铺集合
+        disabled: false,
+        dialogVisibleImg: false,
+        size: "small",
+        loading: false,
+        filters: {
+          status: "",
+          name: "",
+          shop_id: "",
+          t: "goods_imports",
+          create_time: "desc"
         },
-        data() {
-            return {
-                uploadfiles:'',
-                dataStatusForm: {},
-                dialogVisibleReviw: false,
-                statusOptions: [
-                    {key: "0", value: "审核中"},
-                    {key: "1", value: "审核通过"},
-                    {key: "2", value: "审核失败"}
-                ],
-                Roptions: [
-                    {key: 1, value: "审核通过"},
-                    {key: 2, value: "审核不通过"}
-                ],
-                //  imgsList: [],
-                picList: [],
-                imageSizeLimit: 10, //图片上传个数控制
-                imageAccept: ".jpg,.jpeg,.png,.JPG,.JPEG", //图片上传格式
-                imgUpload: this.utils.getUpLoadHost(),
-                typeOptions: [], //所属分类
-                shopOptions: [], //店铺集合
-                disabled: false,
-                dialogVisibleImg: false,
-                size: "small",
-                loading: false,
-                filters: {
-                    status: "",
-                    name: "",
-                    shop_id: "",
-                    t: "invest_quiz",
-                    create_time: "desc"
-                },
-                dataForm: {
-                    id: "",
-                    Title: "",
-                    quizMemo: "",
-                    InvestMemo: "",
-                    Type_TestOrLearing: "",
-                    testclass: "",
-                    Picture: "",
-                    ReportNeedMoney: "",
-                    TestNeedMoney: "",
-                    quizStatus: "",
-                    PagePos:""
+        dataForm: {
+          id: "",
+          Title: "",
+          quizMemo: "",
+          InvestMemo: "",
+          Type_TestOrLearing: "",
+          testclass: "",
+          Picture: "",
+          ReportNeedMoney: "",
+          TestNeedMoney: "",
+          quizStatus: "",
+          PagePos: ""
 
-                },
-                dataFormRules: {
-
-                    Title: [{required: true, message: "请输入方案名称", trigger: "blur"}],
-
-                    quizStatus: [
-                        {required: true, message: "请选择方案状态,处于停用状态还是使用状态", trigger: "change"}
-                    ],
-                    Picture: [{required: true, message: "请上传主图", trigger: "blur"}]
-                },
-                columns: [],
-                filterColumns: [],
-                pageRequest: {pageNum: 1, pageSize: 10},
-                pageResult: {},
-                checked: [],
-                operation: false, // true:新增, false:编辑
-                dialogVisible: false, // 新增编辑界面是否显示
-                editLoading: false,
-                checkpage: false,
-                deptData: [],
-                dialogVisibleImageList: false,
-                filelist: [],
-                popupQuestionTypeData: [],
-                popuptestclassData: [],
-                popupQuizData: [],
-                popupPagePosData: [],
-                popupTreeProps: {
-                    label: "name",
-                    children: "children"
-                },
-                editorOption: {
-                    modules: {
-                        toolbar: {
-                            container: [
-                                ["bold", "italic", "underline", "strike"], //加粗，斜体，下划线，删除线
-                                ["blockquote", "code-block"], //引用，代码块
-                                [{header: 1}, {header: 2}], // 标题，键值对的形式；1、2表示字体大小
-                                [{list: "ordered"}, {list: "bullet"}], //列表
-                                [{script: "sub"}, {script: "super"}], // 上下标
-                                [{indent: "-1"}, {indent: "+1"}], // 缩进
-                                [{direction: "rtl"}], // 文本方向
-                                [{size: ["small", false, "large", "huge"]}], // 字体大小
-                                [{header: [1, 2, 3, 4, 5, 6, false]}], //几级标题
-                                [{color: []}, {background: []}], // 字体颜色，字体背景颜色
-                                [{font: []}], //字体
-                                [{align: []}], //对齐方式b
-                                ["clean"], //清除字体样式
-                                ["image"] //上传图片、上传视频
-                            ], // 工具栏
-                            handlers: {
-                                image: function (value) {
-                                    if (value) {
-                                        // 调用iview图片上传
-                                        $("#uploadButton").click();
-                                    } else {
-                                        this.quill.format("image", false);
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    theme: "snow"
-                },
-                login_shop_id: ""
-            };
         },
-        computed: {
-            editor() {
-                return this.$refs.myQuillEditor.quill;
+        dataFormRules: {
+
+          goodname: [{required: true, message: "请输入产品名称", trigger: "blur"}]
+        },
+        columns: [],
+        filterColumns: [],
+        pageRequest: {pageNum: 1, pageSize: 10},
+        pageResult: {},
+        checked: [],
+        operation: false, // true:新增, false:编辑
+        dialogVisible: false, // 新增编辑界面是否显示
+        editLoading: false,
+        checkpage: false,
+        deptData: [],
+        dialogVisibleImageList: false,
+        filelist: [],
+        popupQuestionTypeData: [],
+        popuptestclassData: [],
+        popupQuizData: [],
+        popupPagePosData: [],
+        popupTreeProps: {
+          label: "name",
+          children: "children"
+        },
+        editorOption: {
+          modules: {
+            toolbar: {
+              container: [
+                ["bold", "italic", "underline", "strike"], //加粗，斜体，下划线，删除线
+                ["blockquote", "code-block"], //引用，代码块
+                [{header: 1}, {header: 2}], // 标题，键值对的形式；1、2表示字体大小
+                [{list: "ordered"}, {list: "bullet"}], //列表
+                [{script: "sub"}, {script: "super"}], // 上下标
+                [{indent: "-1"}, {indent: "+1"}], // 缩进
+                [{direction: "rtl"}], // 文本方向
+                [{size: ["small", false, "large", "huge"]}], // 字体大小
+                [{header: [1, 2, 3, 4, 5, 6, false]}], //几级标题
+                [{color: []}, {background: []}], // 字体颜色，字体背景颜色
+                [{font: []}], //字体
+                [{align: []}], //对齐方式b
+                ["clean"], //清除字体样式
+                ["image"] //上传图片、上传视频
+              ], // 工具栏
+              handlers: {
+                image: function (value) {
+                  if (value) {
+                    // 调用iview图片上传
+                    $("#uploadButton").click();
+                  } else {
+                    this.quill.format("image", false);
+                  }
+                }
+              }
             }
+          },
+          theme: "snow"
         },
-        methods: {
-            inputFileChange(e){
-                this.uploadfiles = e.target.files[0] //当input中选择文件时触发一个事件并让data当中的files拿到所选择的文件
-            },
-            handleSuccess(res) {
-                // 获取富文本组件实例
-                //debugger;
-                let quill = this.$refs.myQuillEditor.quill;
-                // 如果上传成功
-                if (res.data.imgUrl) {
-                    debugger;
-                    // 获取光标所在位置
-                    let length = quill.getSelection().index;
-                    // 插入图片，res为服务器返回的图片链接地址
+        login_shop_id: ""
+      };
+    },
+    computed: {
+      editor() {
+        return this.$refs.myQuillEditor.quill;
+      }
+    },
+    methods: {
 
-                    quill.insertEmbed(length, "image",'/'+res.data.imgUrl);
-                    // 调整光标到最后
-                    quill.setSelection(length + 1);
-                } else {
-                    // 提示信息，需引入Message
-                    Message.error("图片插入失败");
-                }
-            },
-            onEditorReady(editor) {
-                // 准备编辑器
-            },
-            onEditorBlur() {
-            }, // 失去焦点事件
-            onEditorFocus() {
-            }, // 获得焦点事件
-            onEditorChange(e) {
-            }, // 内容改变事件
-            saveHtml: function (event) {
-            },
-            handlePictureCardPreview(data) {
-               // debugger;
-                var url = data.url;
-                this.filelist = [];
-                this.filelist.push(url);
-                this.dialogVisibleImageList = true;
-            },
+      handleExcelSuccess(res) {
+        let this_ = this;
+        // 获取富文本组件实例
+        debugger;
+        this_.editLoading = true;
+        let params = Object.assign({}, res.data);
+        //params.t = "goods_imports";
 
-            handleImgUploadRemove(data) {
-                //debugger;
-                var index = data.index;
-                this.picList.splice(index, 1);
-            },
-            handleImgUploadChange(data) {
-               // debugger;
-                this.picList = data.filelist;
-                if (this.picList >this.imageSizeLimit){////限制数量
-                    this.picList = [this.picList[this.picList.length - 1]];
-                }
-            },
+        // params.imgs = this.imgsList.map(item => item.url).toString();
+        //params.Picture = this.picList.map(item => item.url).toString();
 
-            /*   handleImgImgUploadRemove(data) {
-                   //debugger;
-                   var index = data.index;
-                   this.imgsList.splice(index, 1);
-               },
-               handleImgImgUploadChange(data) {
-                  // debugger;
-                   this.imgsList = data.filelist;
-               },
-   */
-            //取消按钮
-            cleanDataForm() {
-                let this_ = this;
-                this.dialogVisible = false;
-                if (this.$refs["dataForm"]) {
-                    this.$refs["dataForm"].resetFields();
-                }
-                console.log(this.dataForm);
+        //params.status = "0";
 
-                this.picList = [];
-                // this.imgsList = [];
-            },
-            addQuiz: function (params) {
-                let this_ = this;
-                this.dialogVisible = true;
-                this.operation = false;
-                if (this.$refs["dataForm"]) {
-                    this.$refs["dataForm"].resetFields();
-                }
-                this.dataForm.status = 0;
-                if (this.login_shop_id) {
-                    this.dataForm.shop_id = this.login_shop_id;
-                }
-                this.dataForm.parentName = "";
+        this_.editLoading = true;
 
-                this.picList = [];
-                // this.imgsList = [];
-            },
-            // 显示编辑界面
-            handleDetail: function (params) {
-                //debugger;
-                this.dialogVisible = true;
-                this.operation = false;
-                this.$nextTick(() => {
-                    let this_ = this;
-                    params.row.parentName = params.row.type;
-                    this.dataForm = Object.assign({}, params.row);
-                    this.picList = [];
-                    // this.imgsList = [];
+        this_.utils.request.cmn(params, ' pricereport-service/priceExcel/saveExcel', this_.editInfoBack);
+        //this_.utils.request.editInfo(params, this_.editInfoBack);
+        /*
 
-                    if (params.row.Picture) {
-                        $.each(params.row.Picture.split(","), function (key, val) {
-                            let param = {};
-                            if (this_.utils.isNull(val)) {
-                            } else {
-                                param.url = val;
-                                this_.picList.push(param);
-                            }
-                        });
-                    }
+        let quill = this.$refs.myQuillEditor.quill;
+        // 如果上传成功
+        if (res.data.imgUrl) {
+          debugger;
+          // 获取光标所在位置
+          let length = quill.getSelection().index;
+          // 插入图片，res为服务器返回的图片链接地址
 
-                });
-            },
-            //保存修改
-            submitForm: function () {
-                var this_ = this;
+          quill.insertEmbed(length, "image", '/' + res.data.imgUrl);
+          // 调整光标到最后
+          quill.setSelection(length + 1);
+        } else {
+          // 提示信息，需引入Message
+          Message.error("图片插入失败");
+        }*/
+      },
+      handleSuccess(res) {
+        // 获取富文本组件实例
+        //debugger;
+        let quill = this.$refs.myQuillEditor.quill;
+        // 如果上传成功
+        if (res.data.imgUrl) {
+          debugger;
+          // 获取光标所在位置
+          let length = quill.getSelection().index;
+          // 插入图片，res为服务器返回的图片链接地址
 
-                this_.$refs.dataForm.validate(valid => {
-                    if (valid) {
-                        let params = Object.assign({}, this_.dataForm);
-                        params.t = "invest_quiz";
-
-                        // params.imgs = this.imgsList.map(item => item.url).toString();
-                        params.Picture = this.picList.map(item => item.url).toString();
-
-                        if (!params.Picture) {
-                            this.$message({message: "请选择主图", type: "error"});
-                            return;
-                        }
-
-
-                        params.status = "0";
-
-                        this_.editLoading = true;
-                        this_.utils.request.editInfo(params, this_.editInfoBack);
-                    }
-                });
-            },
-            // 新增修改回调
-            editInfoBack: function (data) {
-                this.editLoading = false;
-                if (data.code == 200) {
-                    this.$message({message: "操作成功", type: "success"});
-                    this.findPage();
-                    this.dialogVisible = false;
-                } else {
-                    this.$message({message: "操作失败, " + data.msg, type: "error"});
-                }
-            },
-            findPage: function (data) {
-                let login_shop_id = localStorage.getItem("login_shop_id");
-                if (login_shop_id) {
-                    this.login_shop_id = login_shop_id;
-                }
-                if (this.login_shop_id) {
-                    this.filters.shop_id = this.login_shop_id;
-                }
-                this.$refs.CyTable.findPage(this.filters);
-            },
-
-            //列表下载
-            downloadExcel() {
-                this.$confirm("确定下载列表文件?", "提示", {
-                    confirmButtonText: "确定",
-                    cancelButtonText: "取消",
-                    type: "warning"
-                })
-                    .then(() => {
-                        let filename = "商品管理";
-                        this.exportData(this.filters, this.filterColumns, filename);
-                    })
-                    .catch(() => {
-                    });
-            },
-            //excle导出
-            exportData(filters, filterColumns, fileName) {
-                if (filters == undefined || filters == null) {
-                    filters = {};
-                }
-                filters.start = null;
-                filters.limit = null;
-                this.utils.request.queryCmnQueryPage(filters, res => {
-                    if (fileName == undefined || fileName == null) {
-                        fileName = "excel-list";
-                    }
-
-                    fileName = fileName + "_" + formatDate(new Date(), "yyyyMMdd");
-
-                    if (res.data.rows == null || res.data.rows.length == 0) {
-                        this.$message({message: "暂无需要导出的数据 ", type: "error"});
-                        return;
-                    }
-                    exportExcel(res.data.rows, filterColumns, fileName);
-                }, filters.tService);
-            },
-            // 批量删除
-            handleDelete: function (data) {
-                var ids = "";
-                for (var i = 0; i < data.params.length; i++) {
-                    ids = ids + data.params[i].id + ",";
-                }
-
-                data.t = "invest_quiz";
-                data.ids = ids;
-                this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
-            },
-            deleteInfoBack: function () {
-                this.findPage();
-                this.dialogVisible = false;
-                this.operation = false;
-            },
-            // 显示查询
-            queryInfo: function () {
-                this.findPage(this.filters);
-            },
-            selectionChange: function (params) {
-                console.log(params);
-                this.checked = params.selections;
-            },
-            // 显示新增界面
-            handleAdd: function () {
-                this.dialogVisible = true;
-                this.operation = true;
-                if (this.$refs["dataForm"]) {
-                    this.$refs["dataForm"].resetFields();
-                }
-            },
-            // 处理表格列过滤显示
-            handleFilterColumns: function (data) {
-                this.filterColumns = data.filterColumns;
-                this.$refs.tableColumnFilterDialog.setDialogVisible(false);
-            },
-
-            // 处理表格列过滤显示
-            displayFilterColumnsDialog: function () {
-                this.$refs.tableColumnFilterDialog.setDialogVisible(true);
-            },
-
-            // 时间格式化
-            dateFormat: function (row, column, cellValue, index) {
-                return format(row[column.property]);
-            },
-
-            // 处理表格列过滤显示
-            initColumns: function () {
-                this.columns = [
-                    {prop: "id", label: "ID", minWidth: 120},
-                    {prop: "Title", label: "方案名称", minWidth: 120},
-
-
-                    {
-                        prop: "Picture",
-                        label: "主图",
-                        minWidth: 120,
-                        formatter: this.showPhto
-                    },
-                    {prop: "ReportNeedMoney", label: "显示报告费用", minWidth: 120},
-                    {
-                        prop: "TestNeedMoney",
-                        label: "开始测试费用",
-                        minWidth: 120,
-                        showOverflowTooltip: false
-                    },
-                    {
-                        prop: "testclass",
-                        label: "分类",
-                        minWidth: 120,
-                        formatter: this.showTestClass
-                    },
-                    {
-                        prop: "quizStatus",
-                        label: "状态",
-                        minWidth: 120,
-                        formatter: this.showStatus
-                    },
-                    {
-                        prop: "PagePos",
-                        label: "页面位置",
-                        minWidth: 120,
-                        formatter: this.showPagePos
-                    },
-                    {
-                        prop: "create_time",
-                        label: "创建时间",
-                        minWidth: 180,
-                        formatter: this.timestampToTime
-                    }
-                ];
-                var temp = [];
-                $.each(this.columns, function (key, val) {
-                    temp.push(val);
-                });
-                this.filterColumns = temp;
-            },
-
-            showPhto(row, column, cellValue, index) {
-                if (cellValue != null && "" != cellValue) {
-                    return (
-                        '<i class="el-icon-zoom-in"><div style="display:none">' +
-                        cellValue +
-                        "</div></i>"
-                    );
-                }
-            },
-
-            resetForm(formName) {
-                (this.filters = {
-                    status: "",
-                    name: "",
-                    shop_id: "",
-                    t: "invest_quiz"
-                }),
-                    this.$refs.CyTable.resetForm();
-                this.findPage();
-            },
-            showTestClass(row, column, cellValue, index) {
-                // debugger;
-                for (let ddd = 0; ddd < this.popuptestclassData.length; ddd++) {
-                    // debugger;
-                    if (this.popuptestclassData[ddd].val == cellValue) {
-                        return this.popuptestclassData[ddd].dicName;
-                    }
-                }
-
-                return "";
-            },
-            showStatus(row, column, cellValue, index) {
-                // debugger;
-                for (let ddd = 0; ddd < this.popupQuizData.length; ddd++) {
-                    // debugger;
-                    if (this.popupQuizData[ddd].val == cellValue) {
-                        return this.popupQuizData[ddd].dicName;
-                    }
-                }
-
-                return "";
-            },
-
-            showPagePos(row, column, cellValue, index) {
-                // debugger;
-                for (let ddd = 0; ddd < this.popupPagePosData.length; ddd++) {
-                    // debugger;
-                    if (this.popupPagePosData[ddd].val == cellValue) {
-                        return this.popupPagePosData[ddd].dicName;
-                    }
-                }
-
-                return "";
-            },
-
-            timestampToTime(row, column, cellValue, index) {
-                var date = new Date(cellValue); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-                let Y = date.getFullYear() + '-';
-                let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-                let D = date.getDate() + ' ';
-                let h = date.getHours() + ':';
-                let m = date.getMinutes() + ':';
-                let s = date.getSeconds();
-                return Y + M + D+ h+m+s;
-            },
-            // 所属题库初始化
-            querypageList() {
-                var that = this;
-                this.utils.request.querypageList({t: "invest_quiz"}, function (data) {
-                    that.shopOptions = data.data;
-                });
-            },
-
-            handlePreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
-            },
-            handlePicRemove(file, fileList) {
-                if (picFileList && picFileListt.length == 0) {
-                    this.dataForm.Picture = "";
-                }
-            },
-            handleImgsRemove(file, fileList) {
-                if (imgsFileList && imgsFileList.length == 0) {
-                    this.dataForm.imgs = "";
-                }
-            },
-            beforeClose() {
-                this.filelist = [];
-            },
-            async findDicType() {
-                var this_ = this;
-
-                let letres = await this.utils.request.queryDicList('trainOrtest');
-                if (letres.code = 200) {
-                    this_.popupQuestionTypeData = letres.data;
-                }
-
-                letres = await this.utils.request.queryDicList('testclass');
-                if (letres.code = 200) {
-                    this_.popuptestclassData = letres.data;
-                }
-                //debugger;
-                //
-                letres = await this.utils.request.queryDicList('quizStatusType');
-                if (letres.code = 200) {
-                    this_.popupQuizData = letres.data;
-                }
-                letres = await this.utils.request.queryDicList('PagePos');
-                if (letres.code = 200) {
-                    this_.popupPagePosData = letres.data;
-                }
-            },
-
-
-            review(data) {
-                if (this.checked.length < 1) {
-                    this.$message({message: "审核数据不能为空", type: "error"});
-                    return;
-                }
-                this.dialogVisibleReviw = true;
-            }
-        },
-        async mounted() {
-            await this.findDicType();
-
-            this.initColumns();
-            this.querypageList();
-
-            $(document).on(
-                "click",
-                ".el-icon-zoom-in",
-                function (e) {
-                    let urlList = $(e.target)
-                        .find("div")
-                        .html();
-                    this.filelist = urlList.split(",");
-                    this.dialogVisibleImageList = true;
-                }.bind(this)
-            );
+          quill.insertEmbed(length, "image", '/' + res.data.imgUrl);
+          // 调整光标到最后
+          quill.setSelection(length + 1);
+        } else {
+          // 提示信息，需引入Message
+          Message.error("图片插入失败");
         }
-    };
+      }
+      ,
+      onEditorReady(editor) {
+        // 准备编辑器
+      }
+      ,
+      onEditorBlur() {
+      }
+      , // 失去焦点事件
+      onEditorFocus() {
+      }
+      , // 获得焦点事件
+      onEditorChange(e) {
+      }
+      , // 内容改变事件
+      saveHtml: function (event) {
+      }
+      ,
+      handlePictureCardPreview(data) {
+        // debugger;
+        var url = data.url;
+        this.filelist = [];
+        this.filelist.push(url);
+        this.dialogVisibleImageList = true;
+      }
+      ,
+
+      handleImgUploadRemove(data) {
+        //debugger;
+        var index = data.index;
+        this.picList.splice(index, 1);
+      }
+      ,
+      handleImgUploadChange(data) {
+        // debugger;
+        this.picList = data.filelist;
+        if (this.picList > this.imageSizeLimit) {////限制数量
+          this.picList = [this.picList[this.picList.length - 1]];
+        }
+      }
+      ,
+
+      /*   handleImgImgUploadRemove(data) {
+             //debugger;
+             var index = data.index;
+             this.imgsList.splice(index, 1);
+         },
+         handleImgImgUploadChange(data) {
+            // debugger;
+             this.imgsList = data.filelist;
+         },
+*/
+      //取消按钮
+      cleanDataForm() {
+        let this_ = this;
+        this.dialogVisible = false;
+        if (this.$refs["dataForm"]) {
+          this.$refs["dataForm"].resetFields();
+        }
+        console.log(this.dataForm);
+
+        this.picList = [];
+        // this.imgsList = [];
+      }
+      ,
+      addQuiz: function (params) {
+        let this_ = this;
+        this.dialogVisible = true;
+        this.operation = false;
+        if (this.$refs["dataForm"]) {
+          this.$refs["dataForm"].resetFields();
+        }
+        this.dataForm.status = 0;
+        if (this.login_shop_id) {
+          this.dataForm.shop_id = this.login_shop_id;
+        }
+        this.dataForm.parentName = "";
+
+        this.picList = [];
+        // this.imgsList = [];
+      }
+      ,
+      // 显示编辑界面
+      handleDetail: function (params) {
+        //debugger;
+        this.dialogVisible = true;
+        this.operation = false;
+        this.$nextTick(() => {
+          let this_ = this;
+          params.row.parentName = params.row.type;
+          this.dataForm = Object.assign({}, params.row);
+          this.picList = [];
+          // this.imgsList = [];
+
+          if (params.row.Picture) {
+            $.each(params.row.Picture.split(","), function (key, val) {
+              let param = {};
+              if (this_.utils.isNull(val)) {
+              } else {
+                param.url = val;
+                this_.picList.push(param);
+              }
+            });
+          }
+
+        });
+      }
+      ,
+      //保存修改
+      submitForm: function () {
+        var this_ = this;
+
+        this_.$refs.dataForm.validate(valid => {
+          if (valid) {
+            let params = Object.assign({}, this_.dataForm);
+            params.t = "goods_imports";
+
+            // params.imgs = this.imgsList.map(item => item.url).toString();
+            params.Picture = this.picList.map(item => item.url).toString();
+
+            if (!params.Picture) {
+              this.$message({message: "请选择主图", type: "error"});
+              return;
+            }
+
+
+            params.status = "0";
+
+            this_.editLoading = true;
+            this_.utils.request.editInfo(params, this_.editInfoBack);
+          }
+        });
+      }
+      ,
+      // 新增修改回调
+      editInfoBack: function (data) {
+        this.editLoading = false;
+        if (data.code == 200) {
+          this.$message({message: "操作成功", type: "success"});
+          this.findPage();
+          this.dialogVisible = false;
+        } else {
+          this.$message({message: "操作失败, " + data.msg, type: "error"});
+        }
+      }
+      ,
+      findPage: function (data) {
+
+        this.$refs.CyTable.findPage(this.filters);
+      }
+      ,
+
+      //列表下载
+      downloadExcel() {
+        this.$confirm("确定下载列表文件?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            let filename = "商品管理";
+            this.exportData(this.filters, this.filterColumns, filename);
+          })
+          .catch(() => {
+          });
+      }
+      ,
+      //excle导出
+      exportData(filters, filterColumns, fileName) {
+        if (filters == undefined || filters == null) {
+          filters = {};
+        }
+        filters.start = '';///null error
+        filters.limit = '';
+        this.utils.request.requestPostUrl(filters, "pricereport-service/priceExcel/downloadExcel",res => {
+
+        });
+      }
+      ,
+      // 批量删除
+      handleDelete: function (data) {
+        var ids = "";
+        for (var i = 0; i < data.params.length; i++) {
+          ids = ids + data.params[i].id + ",";
+        }
+
+        data.t = "goods_imports";
+        data.ids = ids;
+        this.utils.request.batchDeleteInfo(data, this.deleteInfoBack);
+      }
+      ,
+      deleteInfoBack: function () {
+        this.findPage();
+        this.dialogVisible = false;
+        this.operation = false;
+      }
+      ,
+      // 显示查询
+      queryInfo: function () {
+        this.findPage(this.filters);
+      }
+      ,
+      selectionChange: function (params) {
+        console.log(params);
+        this.checked = params.selections;
+      }
+      ,
+      // 显示新增界面
+      handleAdd: function () {
+        this.dialogVisible = true;
+        this.operation = true;
+        if (this.$refs["dataForm"]) {
+          this.$refs["dataForm"].resetFields();
+        }
+      }
+      ,
+      // 处理表格列过滤显示
+      handleFilterColumns: function (data) {
+        this.filterColumns = data.filterColumns;
+        this.$refs.tableColumnFilterDialog.setDialogVisible(false);
+      }
+      ,
+
+      // 处理表格列过滤显示
+      displayFilterColumnsDialog: function () {
+        this.$refs.tableColumnFilterDialog.setDialogVisible(true);
+      }
+      ,
+
+      // 时间格式化
+      dateFormat: function (row, column, cellValue, index) {
+        return format(row[column.property]);
+      }
+      ,
+
+      // 处理表格列过滤显示
+      initColumns: function () {
+        this.columns = [
+          {prop: "id", label: "ID", minWidth: 120},
+          {prop: "num", label: "原始序号", minWidth: 120},
+          {prop: "goodname", label: "产品名称", minWidth: 120},
+          {prop: "goodsclass", label: "分类", minWidth: 120},
+          {prop: "specification", label: "规格", minWidth: 120},
+          {prop: "unit", label: "单位", minWidth: 120},
+          {prop: "Factoryprice", label: "出厂价", minWidth: 120},
+          {prop: "retailprice", label: "建议零售价", minWidth: 120},
+          {prop: "Shelflife", label: "保质期", minWidth: 120},
+          {prop: "factory", label: "厂家", minWidth: 120},
+          {
+            prop: "goodspicture",
+            label: "产品图片",
+            minWidth: 120,
+            formatter: this.showPhto
+          },
+          {
+            prop: "create_time",
+            label: "创建时间",
+            minWidth: 180,
+            formatter: this.timestampToTime
+          }
+        ];
+        var temp = [];
+        $.each(this.columns, function (key, val) {
+          temp.push(val);
+        });
+        this.filterColumns = temp;
+      }
+      ,
+
+      showPhto(row, column, cellValue, index) {
+        if (cellValue != null && "" != cellValue) {
+          return (
+            '<i class="el-icon-zoom-in"><div style="display:none">' +
+            cellValue +
+            "</div></i>"
+          );
+        }
+      }
+      ,
+
+      resetForm(formName) {
+        (this.filters = {
+          status: "",
+          name: "",
+          shop_id: "",
+          t: "goods_imports"
+        }),
+          this.$refs.CyTable.resetForm();
+        this.findPage();
+      }
+      ,
+
+      timestampToTime(row, column, cellValue, index) {
+        var date = new Date(cellValue); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        let Y = date.getFullYear() + '-';
+        let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        let D = date.getDate() + ' ';
+        let h = date.getHours() + ':';
+        let m = date.getMinutes() + ':';
+        let s = date.getSeconds();
+        return Y + M + D + h + m + s;
+      }
+      ,
+      // 所属题库初始化
+      querypageList() {
+        var that = this;
+        this.utils.request.querypageList({t: "goods_imports"}, function (data) {
+          that.shopOptions = data.data;
+        });
+      }
+      ,
+
+      handlePreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      }
+      ,
+      handlePicRemove(file, fileList) {
+        if (picFileList && picFileListt.length == 0) {
+          this.dataForm.Picture = "";
+        }
+      }
+      ,
+      handleImgsRemove(file, fileList) {
+        if (imgsFileList && imgsFileList.length == 0) {
+          this.dataForm.imgs = "";
+        }
+      }
+      ,
+      beforeClose() {
+        this.filelist = [];
+      }
+      ,
+      async findDicType() {
+        var this_ = this;
+
+        let letres = await this.utils.request.queryDicList('trainOrtest');
+        if (letres.code = 200) {
+          this_.popupQuestionTypeData = letres.data;
+        }
+
+        letres = await this.utils.request.queryDicList('testclass');
+        if (letres.code = 200) {
+          this_.popuptestclassData = letres.data;
+        }
+        //debugger;
+        //
+        letres = await this.utils.request.queryDicList('quizStatusType');
+        if (letres.code = 200) {
+          this_.popupQuizData = letres.data;
+        }
+        letres = await this.utils.request.queryDicList('PagePos');
+        if (letres.code = 200) {
+          this_.popupPagePosData = letres.data;
+        }
+      }
+      ,
+
+
+      review(data) {
+        if (this.checked.length < 1) {
+          this.$message({message: "审核数据不能为空", type: "error"});
+          return;
+        }
+        this.dialogVisibleReviw = true;
+      }
+    },
+    async mounted() {
+      await this.findDicType();
+
+      this.initColumns();
+      this.querypageList();
+
+      $(document).on(
+        "click",
+        ".el-icon-zoom-in",
+        function (e) {
+          let urlList = $(e.target)
+            .find("div")
+            .html();
+          this.filelist = urlList.split(",");
+          this.dialogVisibleImageList = true;
+        }.bind(this)
+      );
+    }
+  };
 </script>
 
 <style scoped>
@@ -874,8 +884,8 @@
   }
 
 
-  .textarea >>> .el-textarea__inner{
-    font-family:"Microsoft" !important;
+  .textarea >>> .el-textarea__inner {
+    font-family: "Microsoft" !important;
     width: 640px;
   }
 </style>

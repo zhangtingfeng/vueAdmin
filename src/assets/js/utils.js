@@ -180,6 +180,9 @@ export default {
     findPermissions(data, callback) {
       this.requestPostUrl(data, 'student-service/SysMenu/findPermissions', callback)
     },
+    cmn(data,url, callback) {
+      this.requestPostUrl(data, url, callback)
+    },
     editUser(data, callback) {
       this.requestPostUrl(data, 'student-service/SysMenu/editUser', callback)
     },
@@ -214,6 +217,7 @@ export default {
       this.requestPostUrl(data, 'student-service/cmn/checkShopDoorPlate', callback);
     },
     queryCmnQueryPage: function (data, callback,tService="student-service") { // 通用 查询列表
+     // debugger;
       this.requestPostUrl(data, tService+'/cmn/queryPage', callback);
     },
     queryForPage: function (data, callback) { // 通用 查询列表
