@@ -2,6 +2,7 @@ import axios from 'axios'
 import router from '../../router'
 import {Message} from 'element-ui'
 
+import {Loading}from 'element-ui'
 //const host = 'http://localhost:38030/jfc-shop/';
 //var host = '';
 const PIC_URL_PRE = 'F:/usr/local/static/imgs';
@@ -52,7 +53,11 @@ export default {
         params["headRouter"] = argurl;
       }
 
-
+      let loading = Loading.service({
+        fullscreen: true,
+        text: '拼命加载中...',
+// target:'#main'
+      });
       //debugger;
       axios.post(url, (params),
         {
@@ -62,7 +67,8 @@ export default {
         }
       ).then(rsp => {
 
-
+        let loading = Loading.service({});
+        loading.close();
         if (rsp.data.code == "4000") {
           Message.error({//弹窗使用方法
             showClose: true,
@@ -82,6 +88,8 @@ export default {
 
 
       }).catch(error => {
+        let loading = Loading.service({});
+        loading.close();
         var data = {};
         data.code = '9999';
         data.msg = error.message;

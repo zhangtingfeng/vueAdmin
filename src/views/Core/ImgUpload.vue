@@ -9,7 +9,7 @@
           :tabindex="index"
           class="el-upload-list__item is-success"
         >
-          <img :src="BaseResourceUrl+'/'+file.url" alt="ok" class="el-upload-list__item-thumbnail" />
+          <img :src="BaseResourceUrl+'/'+file.url" alt="ok" class="el-upload-list__item-thumbnail"/>
           <label class="el-upload-list__item-status-label">
             <i class="el-icon-upload-success el-icon-check"></i>
           </label>
@@ -36,18 +36,20 @@
       v-if="showUpload"
     >
       <i class="el-icon-plus"></i>
-      <input type="file" name="file" class="el-upload__input" />
+      <input type="file" name="file" class="el-upload__input"/>
     </div>
 
     <div
       style="color:red;height:150px;font-size:10px;vertical-align:bottom;display:table-cell; "
       v-if="showWarnInfo"
-    >请务必上传清晰、准确的单据证照，否则责任自负</div>
+    >请务必上传清晰、准确的单据证照，否则责任自负
+    </div>
 
     <el-upload
       :action="imgUpload"
       :on-success="handleAvatarSuccess"
       :show-file-list="false"
+      :auto-upload="true"
       :file-list="filelist"
       accept="image/gif, image/jpeg, image/jpg, image/png, image/svg"
       :on-change="handleImgUploadChange"
@@ -60,79 +62,97 @@
 <style>
 </style>
 <script>
-export default {
-  name: "ImgUpload",
-  props: {
-    filelist: Array, // 表格列配置
-    uploadButton: {
-      // 尺寸样式
-      type: String,
-      default: "mini"
+  import {Loading} from "element-ui";
+
+  export default {
+    name: "ImgUpload",
+    props: {
+      filelist: Array, // 表格列配置
+      uploadButton: {
+        // 尺寸样式
+        type: String,
+        default: "mini"
+      },
+      showWarnInfo: {
+        // 尺寸样式
+        type: Boolean,
+        default: false
+      },
+      showUpload: {
+        // 尺寸样式
+        type: Boolean,
+        default: true
+      }
     },
-    showWarnInfo: {
-      // 尺寸样式
-      type: Boolean,
-      default: false
-    },
-    showUpload: {
-      // 尺寸样式
-      type: Boolean,
-      default: true
-    }
-  },
-  data() {
-    return {
-      dialogImageUrl: "",
-      imgUpload: this.utils.getUpLoadHost(),
-      dialogVisible: false,
+    data() {
+      return {
+        dialogImageUrl: "",
+        imgUpload: this.utils.getUpLoadHost(),
+        dialogVisible: false,
         disabled: false,
         BaseResourceUrl: this.utils.getBaseResourceUrl()
-    };
-  },
-  mounted() {
-  },
-  methods: {
-    //删除
-    handleRemove(index) {
-      this.$emit("handleImgUploadRemove", { index: index });
+      };
     },
-    //查看大图
-    handlePictureCardPreview(url) {
-      this.$emit("handlePictureCardPreview", { url: url });
+    mounted() {
     },
-    //下载
-    handleDownload(file) {
-      var a = document.createElement("a");
-      a.href = file.url;
-      a.download = "";
-      a.target = "_blank";
-      a.click();
-    },
-    handleAvatarSuccess(res, file) {},
-    handleImgUploadChange(file, fileList) {
+    methods: {
+      //删除
+      handleRemove(index) {
+        this.$emit("handleImgUploadRemove", {index: index});
+      },
+      //查看大图
+      handlePictureCardPreview(url) {
+        this.$emit("handlePictureCardPreview", {url: url});
+      },
+      //下载
+      handleDownload(file) {
+        var a = document.createElement("a");
+        a.href = file.url;
+        a.download = "";
+        a.target = "_blank";
+        a.click();
+      },
+      handleAvatarSuccess(res, file) {
+        debugger;
+        let loading = Loading.service({});
+        loading.close();
+      },
+      handleImgUploadChange(file, fileList) {
         //debugger;
-      if (file.response != undefined && file.response != null) {
-        let uid = file.uid;
+        debugger;
 
-        $.each(fileList, function(key, value) {
-          if (uid == value.uid) {
-            value.url = file.response.data.imgUrl;
-          }
+        if (file.response != undefined && file.response != null) {
+          let uid = file.uid;
+
+          $.each(fileList, function (key, value) {
+            if (uid == value.uid) {
+              value.url = file.response.data.imgUrl;
+            }
+          });
+          this.$emit("handleImgUploadChange", {filelist: fileList});
+        }
+      },
+      beforeAvatarUpload(file) {
+        debugger;
+
+        // debugger;
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+          this.$message.error("上传图片大小不能超过 2MB!");
+        }
+
+
+        return isLt2M;
+      },
+      choseFile() {
+        debugger;
+        let loading = Loading.service({
+          fullscreen: true,
+          text: '拼命加载中...',
+// target:'#main'
         });
-        this.$emit("handleImgUploadChange", { filelist: fileList });
+        $("#" + this.uploadButton).click();
       }
-    },
-    beforeAvatarUpload(file) {
-       // debugger;
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        this.$message.error("上传图片大小不能超过 2MB!");
-      }
-      return isLt2M;
-    },
-    choseFile() {
-      $("#" + this.uploadButton).click();
     }
-  }
-};
+  };
 </script>
