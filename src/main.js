@@ -26,6 +26,14 @@ import Videojs from 'video.js'
 
 import 'video.js/dist/video-js.css'
 
+
+import VideoPlayer from 'vue-video-player'
+import 'vue-video-player/src/custom-theme.css'
+import 'video.js/dist/video-js.css'
+
+Vue.use(VideoPlayer)
+
+
 Vue.prototype.$video = Videojs
 Vue.use(VueQuillEditor)
 Vue.prototype.$message = Message
@@ -109,3 +117,14 @@ new Vue({
   store,
   render: h => h(App)
 });
+
+
+
+
+/* 路由发生变化修改页面title */
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
+})

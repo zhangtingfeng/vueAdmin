@@ -13,10 +13,12 @@ import store from '@/store'
 import utils from '@/assets/js/utils'
 
 import { getIFramePath, getIFrameUrl } from '@/utils/iframe'
+import pdfPlay from '@/views/Pdf_Mp4/pdf'
+import mp4Play from '@/views/Pdf_Mp4/mp4'
 
 Vue.use(Router)
 
-const white_url = ['/404', '/registe'];
+const white_url = ['/404', '/registe', '/pdfPlay', '/mp4Play'];
 
 const router = new Router({
   routes: [
@@ -50,6 +52,18 @@ const router = new Router({
       path: '/registe',
       name: '注册',
       component: Registe
+    },
+    {
+      path: '/pdfPlay',
+      name: 'pdfPlay',
+      component: pdfPlay,
+      meta:{title:'知识研究书籍'},
+    },
+    {
+      path: '/mp4Play',
+      name: 'mp4Play',
+      component: mp4Play,
+      meta:{title:'知识研究教学'},
     }
   ]
 })

@@ -26,10 +26,40 @@ module.exports = {
         }
       },
       '/apis': {
-        target: 'http://localhost:48001',//设置你调用的接口域名和端口号npm run eureka 48001 localhost:48001  api.edu.eggsoft.cn   npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
+        target: 'http://api.edu.eggsoft.cn',//设置你调用的接口域名和端口号npm run eureka 48001 localhost:48001  api.edu.eggsoft.cn   npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
         changeOrigin: true,
         pathRewrite: {
           '^/apis': ''//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
+        }
+      },
+      '/Konowledge': {
+        target: 'https://testupload.edu.eggsoft.cn/Konowledge',//设置你调用的接口域名和端口号npm run eureka 48001    npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
+        changeOrigin: true,
+        secure: false,
+        headers: {
+          Referer: 'https://testupload.edu.eggsoft.cn/Konowledge'
+        },
+        pathRewrite: {
+          '^/Konowledge': ''//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
+        }
+      },
+      '/pdf': {
+        target: 'http://storage.xuetangx.com/public_assets/xuetangx/PDF/',//设置你调用的接口域名和端口号npm run eureka 48001    npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
+        changeOrigin: true,
+        pathRewrite: {
+          '^/pdf': ''//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
+        }
+      },
+      '/PdfEdu': {
+        target: 'https://admin.edu.eggsoft.cn/test/StaticImg/PdfEdu',//设置你调用的接口域名和端口号npm run eureka 48001    npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
+        changeOrigin: true,
+        secure: false,
+        headers: {
+          Referer: 'https://admin.edu.eggsoft.cn/test/StaticImg/PdfEdu'
+        },
+
+        pathRewrite: {
+          '^/PdfEdu': ''//这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
         }
       }
     },
