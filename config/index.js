@@ -33,7 +33,7 @@ module.exports = {
         }
       },
       '/Konowledge': {
-        target: 'https://testupload.edu.eggsoft.cn/Konowledge',//设置你调用的接口域名和端口号npm run eureka 48001    npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
+        target: 'https://testupload.edu.eggsoft.cn/Konowledge',//https://testupload.edu.eggsoft.cn/Konowledge/meeting.mp4设置你调用的接口域名和端口号npm run eureka 48001    npm run dev 48028   别忘了加http'http://localhost:38030'  http://api.edu.eggsoft.cn
         changeOrigin: true,
         secure: false,
         headers: {

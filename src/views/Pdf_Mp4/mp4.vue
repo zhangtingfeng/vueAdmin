@@ -57,7 +57,9 @@
         mounted() {
 
             debugger;
-            this.playerOptions.sources.src=decodeURIComponent(this.$route.query.urlpath);
+           // this.playerOptions.sources.src=(this.$route.query.urlpath);//decodeURIComponent
+            this.playerOptions['sources'][0]['src']=(this.$route.query.urlpath);
+            //this.$alert(this.playerOptions.sources.src+'我需要</br>换行',{dangerouslyUseHTMLString:true})
             //  this.$alert(this.$route.query.urlpath+'我需要</br>换行',{dangerouslyUseHTMLString:true})
         },
         methods: {
